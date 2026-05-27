@@ -6,4 +6,7 @@
     <!-- Test classes do not require Javadoc -->
     <suppress checks="MissingJavadocType|MissingJavadocMethod"
               files=".*[/\\]test[/\\].*"/>
+    <!-- Static wildcard imports are idiomatic in JUnit 5 test classes -->
+    <suppress checks="AvoidStarImport"
+              files=".*[/\\]test[/\\].*"/>
 </suppressions>

@@ -1,4 +1,4 @@
-Copyright ${year} Quire Contributors
+Copyright 2025 Quire Contributors
 
 This file is part of Quire.
 
