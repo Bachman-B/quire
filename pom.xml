@@ -5,12 +5,12 @@
              https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.quire</groupId>
-    <artifactId>quire</artifactId>
+    <groupId>com.quirebind</groupId>
+    <artifactId>quire-bind</artifactId>
     <version>1.0.0-SNAPSHOT</version>
     <packaging>pom</packaging>
 
-    <name>Quire</name>
+    <name>QuireBind</name>
     <description>FOSS desktop and web application for preparing PDF files for bookbinding</description>
     <url>https://maiitsoh.com</url>
     <inceptionYear>2025</inceptionYear>
@@ -23,24 +23,24 @@
     </licenses>
 
     <scm>
-        <url>https://github.com/Bachman-B/quire</url>
-        <connection>scm:git:https://github.com/Bachman-B/quire.git</connection>
-        <developerConnection>scm:git:https://github.com/Bachman-B/quire.git</developerConnection>
+        <url>https://github.com/Bachman-B/quire-bind</url>
+        <connection>scm:git:https://github.com/Bachman-B/quire-bind.git</connection>
+        <developerConnection>scm:git:https://github.com/Bachman-B/quire-bind.git</developerConnection>
     </scm>
 
     <issueManagement>
         <system>GitHub Issues</system>
-        <url>https://github.com/Bachman-B/quire/issues</url>
+        <url>https://github.com/Bachman-B/quire-bind/issues</url>
     </issueManagement>
 
     <modules>
-        <module>quire-core</module>
-        <module>quire-ui-desktop</module>
-        <module>quire-ui-web</module>
-        <module>quire-guides</module>
-        <module>quire-batch</module>
-        <module>quire-test</module>
-        <module>quire-convert</module>
+        <module>quire-bind-core</module>
+        <module>quire-bind-ui-desktop</module>
+        <module>quire-bind-ui-web</module>
+        <module>quire-bind-guides</module>
+        <module>quire-bind-batch</module>
+        <module>quire-bind-test</module>
+        <module>quire-bind-convert</module>
     </modules>
 
     <properties>
@@ -69,23 +69,23 @@
         <dependencies>
             <!-- Internal modules -->
             <dependency>
-                <groupId>com.quire</groupId>
-                <artifactId>quire-core</artifactId>
+                <groupId>com.quirebind</groupId>
+                <artifactId>quire-bind-core</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
-                <groupId>com.quire</groupId>
-                <artifactId>quire-guides</artifactId>
+                <groupId>com.quirebind</groupId>
+                <artifactId>quire-bind-guides</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
-                <groupId>com.quire</groupId>
-                <artifactId>quire-batch</artifactId>
+                <groupId>com.quirebind</groupId>
+                <artifactId>quire-bind-batch</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
-                <groupId>com.quire</groupId>
-                <artifactId>quire-test</artifactId>
+                <groupId>com.quirebind</groupId>
+                <artifactId>quire-bind-test</artifactId>
                 <version>${project.version}</version>
                 <scope>test</scope>
             </dependency>
