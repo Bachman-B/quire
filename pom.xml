@@ -5,7 +5,7 @@
              https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.quirebind</groupId>
+    <groupId>com.maiitsoh.quirebind</groupId>
     <artifactId>quire-bind</artifactId>
     <version>1.0.0-SNAPSHOT</version>
     <packaging>pom</packaging>
@@ -69,22 +69,22 @@
         <dependencies>
             <!-- Internal modules -->
             <dependency>
-                <groupId>com.quirebind</groupId>
+                <groupId>com.maiitsoh.quirebind</groupId>
                 <artifactId>quire-bind-core</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
-                <groupId>com.quirebind</groupId>
+                <groupId>com.maiitsoh.quirebind</groupId>
                 <artifactId>quire-bind-guides</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
-                <groupId>com.quirebind</groupId>
+                <groupId>com.maiitsoh.quirebind</groupId>
                 <artifactId>quire-bind-batch</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
-                <groupId>com.quirebind</groupId>
+                <groupId>com.maiitsoh.quirebind</groupId>
                 <artifactId>quire-bind-test</artifactId>
                 <version>${project.version}</version>
                 <scope>test</scope>
