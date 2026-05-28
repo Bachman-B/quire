@@ -215,6 +215,40 @@ class QuireFileParserTest {
     }
 
     @Test
+    void defaultsTechniqueParsed() throws IOException {
+        String yaml = """
+                quire_version: "1.0"
+                defaults:
+                  technique: coptic
+                """;
+        BatchConfig config = QuireFileParser.parseString(yaml);
+        assertEquals("coptic", config.defaults().technique());
+    }
+
+    @Test
+    void defaultsSignatureSizeParsed() throws IOException {
+        String yaml = """
+                quire_version: "1.0"
+                defaults:
+                  signature_size: 8
+                """;
+        BatchConfig config = QuireFileParser.parseString(yaml);
+        assertEquals(8, config.defaults().signatureSize());
+    }
+
+    @Test
+    void factoryDefaultTechniqueIsSewnSignatures() throws IOException {
+        BatchConfig config = QuireFileParser.parseString(MINIMAL);
+        assertEquals("sewn_signatures", config.defaults().technique());
+    }
+
+    @Test
+    void factoryDefaultSignatureSizeIsFour() throws IOException {
+        BatchConfig config = QuireFileParser.parseString(MINIMAL);
+        assertEquals(4, config.defaults().signatureSize());
+    }
+
+    @Test
     void exampleQuireFileParsesSuccessfully() throws IOException {
         try (InputStream in = getClass().getResourceAsStream(
                 "/examples/example.quire")) {

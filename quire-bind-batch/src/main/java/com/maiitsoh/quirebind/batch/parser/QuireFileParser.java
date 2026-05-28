@@ -91,6 +91,8 @@ public final class QuireFileParser {
             return BatchDefaults.factoryDefault();
         }
         return new BatchDefaults(
+                strOr(m, "technique", "sewn_signatures"),
+                intOr(m, "signature_size", 4),
                 strOr(m, "reading_direction", "ltr"),
                 strOr(m, "paper_size", "a4"),
                 parseNumbering(map(m, "numbering")),

@@ -20,14 +20,16 @@ package com.maiitsoh.quirebind.batch.model;
 
 /** Default values applied to all jobs in a {@link BatchConfig} that omit these fields. */
 public record BatchDefaults(
+        String technique,
+        int signatureSize,
         String readingDirection,
         String paperSize,
         BatchNumberingConfig numbering,
         BatchMarksConfig marks) {
 
-    /** Factory default: LTR, A4, arabic body numbering, both marks enabled. */
+    /** Factory default: sewn_signatures, 4 sheets, LTR, A4, arabic body numbering, both marks. */
     public static BatchDefaults factoryDefault() {
-        return new BatchDefaults("ltr", "a4",
+        return new BatchDefaults("sewn_signatures", 4, "ltr", "a4",
                 BatchNumberingConfig.DEFAULT, BatchMarksConfig.DEFAULT);
     }
 }

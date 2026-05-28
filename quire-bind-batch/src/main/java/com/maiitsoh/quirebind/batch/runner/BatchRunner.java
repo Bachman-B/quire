@@ -85,6 +85,12 @@ public final class BatchRunner {
         return List.copyOf(results);
     }
 
+    /** Runs a single job; package-private for use by {@link BatchTemplateRunner}. */
+    static JobResult runSingleJob(
+            BatchJob job, BatchDefaults defaults, Path baseDir, boolean dryRun) {
+        return executeJob(job, defaults, baseDir, dryRun);
+    }
+
     private static JobResult executeJob(
             BatchJob job, BatchDefaults defaults, Path baseDir, boolean dryRun) {
         String name = job.name() != null ? job.name() : "<unnamed>";
@@ -115,7 +121,7 @@ public final class BatchRunner {
 
     private static QuireProject buildProject(
             BatchJob job, BatchDefaults defaults, Path sourcePath) throws IOException {
-        String techniqueStr = job.technique();
+        String techniqueStr = coalesce(job.technique(), defaults.technique(), null);
         if (techniqueStr == null || techniqueStr.isBlank()) {
             throw new IllegalArgumentException("job '" + job.name() + "' has no technique");
         }
@@ -128,12 +134,13 @@ public final class BatchRunner {
         PaperSize paperSize = PaperSize.valueOf(sizeStr.toUpperCase());
 
         BatchPaddingConfig bp = job.padding() != null ? job.padding() : BatchPaddingConfig.NONE;
+        int sigSize = job.signatureSize() > 0 ? job.signatureSize() : defaults.signatureSize();
         PaddingConfig padding = PaddingConfig.builder()
                 .aestheticFront(bp.aestheticFront())
                 .aestheticRear(bp.aestheticRear())
                 .completionFront(bp.completionFront())
                 .completionRear(bp.completionRear())
-                .signatureSize(job.signatureSize())
+                .signatureSize(sigSize)
                 .build();
 
         BatchNumberingConfig bn = coalesceNumbering(job.numbering(), defaults.numbering());

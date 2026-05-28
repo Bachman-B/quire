@@ -29,6 +29,7 @@ import com.maiitsoh.quirebind.core.model.SewingConfig;
 import com.maiitsoh.quirebind.core.model.Signature;
 
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.List;
 
 /** Mutable state shared across wizard steps within a single session. */
@@ -46,6 +47,12 @@ public final class WizardState {
         AFTER
     }
 
+    /** How output paths are derived in batch template mode. */
+    public enum BatchOutputMode {
+        SUFFIX,
+        OUTPUT_DIR
+    }
+
     private WizardMode mode = WizardMode.SINGLE_PDF;
     private PaddingPosition paddingPosition = PaddingPosition.AFTER;
 
@@ -57,6 +64,10 @@ public final class WizardState {
     // Batch mode
     private Path batchConfigPath;
     private BatchConfig batchConfig;
+    private List<Path> batchInputPdfs = new ArrayList<>();
+    private BatchOutputMode batchOutputMode = BatchOutputMode.SUFFIX;
+    private String batchOutputSuffix = "-imposed";
+    private Path batchOutputDir;
 
     // Binding options (shared)
     private BindingTechnique technique = BindingTechnique.SADDLE_STITCH;
@@ -164,6 +175,41 @@ public final class WizardState {
     /** Sets the parsed batch configuration. */
     public void setBatchConfig(BatchConfig batchConfig) {
         this.batchConfig = batchConfig;
+    }
+
+    /** Returns the mutable list of input PDFs for batch template mode. */
+    public List<Path> getBatchInputPdfs() {
+        return batchInputPdfs;
+    }
+
+    /** Returns the output naming mode for batch template mode. */
+    public BatchOutputMode getBatchOutputMode() {
+        return batchOutputMode;
+    }
+
+    /** Sets the output naming mode for batch template mode. */
+    public void setBatchOutputMode(BatchOutputMode batchOutputMode) {
+        this.batchOutputMode = batchOutputMode;
+    }
+
+    /** Returns the suffix appended before the file extension in SUFFIX output mode. */
+    public String getBatchOutputSuffix() {
+        return batchOutputSuffix;
+    }
+
+    /** Sets the output suffix. */
+    public void setBatchOutputSuffix(String batchOutputSuffix) {
+        this.batchOutputSuffix = batchOutputSuffix;
+    }
+
+    /** Returns the output directory for OUTPUT_DIR mode, or {@code null} if not set. */
+    public Path getBatchOutputDir() {
+        return batchOutputDir;
+    }
+
+    /** Sets the output directory. */
+    public void setBatchOutputDir(Path batchOutputDir) {
+        this.batchOutputDir = batchOutputDir;
     }
 
     /** Returns the chosen binding technique. */
@@ -450,6 +496,10 @@ public final class WizardState {
         pageSequence = null;
         batchConfigPath = null;
         batchConfig = null;
+        batchInputPdfs = new ArrayList<>();
+        batchOutputMode = BatchOutputMode.SUFFIX;
+        batchOutputSuffix = "-imposed";
+        batchOutputDir = null;
         technique = BindingTechnique.SADDLE_STITCH;
         paperSize = PaperSize.A4;
         pagesPerSignature = 16;

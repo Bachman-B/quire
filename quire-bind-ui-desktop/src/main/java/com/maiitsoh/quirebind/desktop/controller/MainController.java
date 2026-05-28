@@ -19,6 +19,7 @@
 package com.maiitsoh.quirebind.desktop.controller;
 
 import com.maiitsoh.quirebind.batch.parser.QuireFileParser;
+import com.maiitsoh.quirebind.batch.runner.BatchTemplateRunner;
 import com.maiitsoh.quirebind.core.binding.BindingGroupMapper;
 import com.maiitsoh.quirebind.core.imposition.FolioAssigner;
 import com.maiitsoh.quirebind.core.imposition.PagePaddingApplier;
@@ -46,6 +47,7 @@ import com.maiitsoh.quirebind.core.pdf.PdfImpositionWriter;
 import com.maiitsoh.quirebind.core.pdf.PdfPageLoader;
 import com.maiitsoh.quirebind.desktop.diagram.BindingTechniqueDiagram;
 import com.maiitsoh.quirebind.desktop.state.WizardState;
+import com.maiitsoh.quirebind.desktop.state.WizardState.BatchOutputMode;
 import com.maiitsoh.quirebind.desktop.state.WizardState.PaddingPosition;
 import com.maiitsoh.quirebind.desktop.state.WizardState.WizardMode;
 import com.maiitsoh.quirebind.desktop.template.QuireTemplateWriter;
@@ -67,6 +69,7 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.collections.ListChangeListener;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
@@ -132,6 +135,21 @@ public final class MainController implements Initializable {
     @FXML private Label pageCountLabel;
     @FXML private TextField quirePathField;
     @FXML private Label jobCountLabel;
+    @FXML private ListView<String> batchPdfListView;
+    @FXML private ToggleButton batchSuffixToggle;
+    @FXML private ToggleButton batchFolderToggle;
+    @FXML private HBox batchSuffixPane;
+    @FXML private HBox batchFolderPane;
+    @FXML private TextField batchSuffixField;
+    @FXML private TextField batchOutputDirField;
+
+    // ── Batch run step ────────────────────────────────────────────────────────
+    @FXML private VBox stepBatchRun;
+    @FXML private Button runBatchButton;
+    @FXML private ProgressBar batchProgressBar;
+    @FXML private Label batchProgressLabel;
+    @FXML private ListView<String> batchResultListView;
+    @FXML private Label batchResultSummaryLabel;
 
     // ── Step 2: Options ──────────────────────────────────────────────────────
     @FXML private ComboBox<BindingTechnique> techniqueCombo;
@@ -189,11 +207,14 @@ public final class MainController implements Initializable {
     @FXML private Label exportResultLabel;
 
     // ── State ────────────────────────────────────────────────────────────────
+    private static final int STEP_BATCH_RUN = 4;
+
     private final WizardState state = new WizardState();
     private int currentStep = 0;
     private ToggleGroup modeToggleGroup;
     private ToggleGroup paddingToggleGroup;
     private ToggleGroup sewingStyleToggleGroup;
+    private ToggleGroup batchOutputToggleGroup;
     private final Set<Integer> expandedSignatures = new HashSet<>();
     private final Set<String> collapsedZones = new HashSet<>();
     private final Map<Integer, Image> thumbnailCache = new HashMap<>();
@@ -294,6 +315,19 @@ public final class MainController implements Initializable {
         sewingStyleToggleGroup.selectedToggleProperty().addListener(
             (obs, oldT, newT) -> onSewingStyleToggleChanged(newT));
 
+        // Batch output mode toggle
+        batchOutputToggleGroup = new ToggleGroup();
+        batchSuffixToggle.setToggleGroup(batchOutputToggleGroup);
+        batchFolderToggle.setToggleGroup(batchOutputToggleGroup);
+        batchSuffixToggle.setSelected(true);
+        batchOutputToggleGroup.selectedToggleProperty().addListener(
+            (obs, oldT, newT) -> onBatchOutputToggleChanged(newT));
+
+        // Keep state in sync as PDFs are added/removed
+        batchPdfListView.getItems().addListener(
+            (ListChangeListener<String>) c ->
+                updateBatchNextButton());
+
         // Page list with collapsable signature headers
         pageListView.setCellFactory(lv -> new PageListCell(this::toggleSignatureCollapse));
 
@@ -345,6 +379,12 @@ public final class MainController implements Initializable {
         sewingBandWidthField.setText("10");
         sewingEndMarginField.setText("15");
         sewingHolesParams.setDisable(true);
+        batchPdfListView.getItems().clear();
+        batchSuffixField.setText("-imposed");
+        batchOutputDirField.clear();
+        batchOutputToggleGroup.selectToggle(batchSuffixToggle);
+        batchResultListView.getItems().clear();
+        batchResultSummaryLabel.setText("");
         showStep(0);
         setStatus("New project.");
     }
@@ -433,13 +473,134 @@ public final class MainController implements Initializable {
             state.setBatchConfigPath(path);
             state.setBatchConfig(config);
             quirePathField.setText(path.toString());
-            int jobCount = config.jobs() != null ? config.jobs().size() : 0;
-            jobCountLabel.setText("Jobs loaded: " + jobCount);
-            setStatus("Loaded batch config: " + path.getFileName()
-                + " (" + jobCount + " job(s)).");
+            String technique = config.defaults() != null
+                ? config.defaults().technique() : "unknown";
+            jobCountLabel.setText("Technique: " + technique);
+            setStatus("Loaded template: " + path.getFileName() + " (" + technique + ").");
         } catch (IOException e) {
             showError("Failed to load .quire file", e.getMessage());
         }
+    }
+
+    @FXML
+    private void handleBatchAddPdfs() {
+        FileChooser fc = pdfChooser("Add PDF files");
+        fc.setTitle("Add PDF files for batch processing");
+        List<File> files = fc.showOpenMultipleDialog(wizardStack.getScene().getWindow());
+        if (files != null) {
+            for (File f : files) {
+                Path p = f.toPath();
+                if (!state.getBatchInputPdfs().contains(p)) {
+                    state.getBatchInputPdfs().add(p);
+                    batchPdfListView.getItems().add(f.toString());
+                }
+            }
+        }
+    }
+
+    @FXML
+    private void handleBatchRemovePdf() {
+        int idx = batchPdfListView.getSelectionModel().getSelectedIndex();
+        if (idx >= 0) {
+            state.getBatchInputPdfs().remove(idx);
+            batchPdfListView.getItems().remove(idx);
+        }
+    }
+
+    @FXML
+    private void handleBatchBrowseOutputDir() {
+        javafx.stage.DirectoryChooser dc = new javafx.stage.DirectoryChooser();
+        dc.setTitle("Select output folder");
+        File dir = dc.showDialog(wizardStack.getScene().getWindow());
+        if (dir != null) {
+            state.setBatchOutputDir(dir.toPath());
+            batchOutputDirField.setText(dir.toString());
+        }
+    }
+
+    private void onBatchOutputToggleChanged(Toggle selected) {
+        if (selected == null) {
+            batchOutputToggleGroup.selectToggle(batchSuffixToggle);
+            return;
+        }
+        boolean isSuffix = selected == batchSuffixToggle;
+        showNode(batchSuffixPane, isSuffix);
+        showNode(batchFolderPane, !isSuffix);
+        state.setBatchOutputMode(isSuffix ? BatchOutputMode.SUFFIX : BatchOutputMode.OUTPUT_DIR);
+    }
+
+    private void updateBatchNextButton() {
+        if (state.getMode() == WizardMode.BATCH && currentStep == 0) {
+            nextButton.setDisable(false);
+        }
+    }
+
+    @FXML
+    private void handleRunBatch() {
+        if (state.getBatchConfig() == null) {
+            showError("No template", "Please go back and select a .quire template.");
+            return;
+        }
+        if (state.getBatchInputPdfs().isEmpty()) {
+            showError("No input files", "Please go back and add at least one PDF.");
+            return;
+        }
+        if (state.getBatchOutputMode() == BatchOutputMode.OUTPUT_DIR
+                && state.getBatchOutputDir() == null) {
+            showError("No output folder", "Please go back and select an output folder.");
+            return;
+        }
+        runBatchButton.setDisable(true);
+        batchResultListView.getItems().clear();
+        batchResultSummaryLabel.setText("");
+        showNode(batchProgressBar, true);
+        showNode(batchProgressLabel, true);
+        batchProgressBar.setProgress(-1);
+        batchProgressLabel.setText("Running…");
+
+        List<Path> inputs = List.copyOf(state.getBatchInputPdfs());
+        var template = state.getBatchConfig();
+        var outputMode = state.getBatchOutputMode();
+        var suffix = batchSuffixField.getText().trim().isEmpty()
+                ? "-imposed" : batchSuffixField.getText().trim();
+        var outputDir = state.getBatchOutputDir();
+
+        Task<List<BatchTemplateRunner.TemplateJobResult>> task = new Task<>() {
+            @Override
+            protected List<BatchTemplateRunner.TemplateJobResult> call() {
+                if (outputMode == BatchOutputMode.OUTPUT_DIR) {
+                    return BatchTemplateRunner.runWithDirectory(template, inputs, outputDir, false);
+                } else {
+                    return BatchTemplateRunner.runWithSuffix(template, inputs, suffix, false);
+                }
+            }
+        };
+        task.setOnSucceeded(e -> {
+            List<BatchTemplateRunner.TemplateJobResult> results = task.getValue();
+            long ok = results.stream().filter(BatchTemplateRunner.TemplateJobResult::success).count();
+            long fail = results.size() - ok;
+            for (BatchTemplateRunner.TemplateJobResult r : results) {
+                String icon = r.success() ? "✓" : "✗";
+                batchResultListView.getItems().add(
+                    icon + "  " + r.inputPath().getFileName() + "  →  " + r.message());
+            }
+            batchResultSummaryLabel.setText(
+                "Done: " + ok + " succeeded, " + fail + " failed.");
+            showNode(batchProgressBar, false);
+            showNode(batchProgressLabel, false);
+            runBatchButton.setDisable(false);
+            setStatus("Batch complete: " + ok + "/" + results.size() + " succeeded.");
+        });
+        task.setOnFailed(e -> {
+            showNode(batchProgressBar, false);
+            showNode(batchProgressLabel, false);
+            runBatchButton.setDisable(false);
+            showError("Batch failed", task.getException() != null
+                ? task.getException().getMessage() : "Unknown error");
+        });
+        Thread t = new Thread(task, "batch-runner");
+        t.setDaemon(true);
+        t.start();
     }
 
     // ── Step 2 actions ────────────────────────────────────────────────────────
@@ -1344,18 +1505,27 @@ public final class MainController implements Initializable {
 
     @FXML
     private void handleBack() {
-        if (currentStep > 0) {
+        if (currentStep == STEP_BATCH_RUN) {
+            showStep(0);
+        } else if (currentStep > 0) {
             showStep(currentStep - 1);
         }
     }
 
     @FXML
     private void handleNext() {
-        if (currentStep >= TOTAL_STEPS - 1) {
+        if (currentStep == STEP_BATCH_RUN || currentStep >= TOTAL_STEPS - 1) {
             handleMenuNewProject();
             return;
         }
         if (!validateCurrentStep()) {
+            return;
+        }
+        // In batch mode, step 0 jumps straight to the batch run panel
+        if (currentStep == 0 && state.getMode() == WizardMode.BATCH) {
+            state.setBatchOutputSuffix(batchSuffixField.getText().trim().isEmpty()
+                ? "-imposed" : batchSuffixField.getText().trim());
+            showStep(STEP_BATCH_RUN);
             return;
         }
         int next = currentStep + 1;
@@ -1387,9 +1557,21 @@ public final class MainController implements Initializable {
                     showError("No PDF selected", "Please select a source PDF.");
                     yield false;
                 }
-                if (state.getMode() == WizardMode.BATCH && !state.hasBatchConfig()) {
-                    showError("No batch file", "Please select a .quire batch file.");
-                    yield false;
+                if (state.getMode() == WizardMode.BATCH) {
+                    if (!state.hasBatchConfig()) {
+                        showError("No template", "Please select a .quire template file.");
+                        yield false;
+                    }
+                    if (state.getBatchInputPdfs().isEmpty()) {
+                        showError("No input files", "Please add at least one PDF to process.");
+                        yield false;
+                    }
+                    if (state.getBatchOutputMode() == BatchOutputMode.OUTPUT_DIR
+                            && state.getBatchOutputDir() == null) {
+                        showError("No output folder",
+                            "Please select an output folder, or switch to suffix mode.");
+                        yield false;
+                    }
                 }
                 yield true;
             }
@@ -1476,15 +1658,22 @@ public final class MainController implements Initializable {
 
     private void showStep(int step) {
         currentStep = step;
-        List<VBox> steps = List.of(stepLoad, stepOptions, stepPreview, stepExport);
+        List<VBox> steps = List.of(stepLoad, stepOptions, stepPreview, stepExport, stepBatchRun);
         for (int i = 0; i < steps.size(); i++) {
             showNode(steps.get(i), i == step);
         }
-        stepIndicatorLabel.setText("Step " + (step + 1) + " of " + TOTAL_STEPS);
-        backButton.setDisable(step == 0);
-        boolean isLast = step == TOTAL_STEPS - 1;
-        nextButton.setText(isLast ? "↺ New Project" : "Next →");
-        nextButton.setDisable(false);
+        if (step == STEP_BATCH_RUN) {
+            stepIndicatorLabel.setText("Batch — Step 2 of 2");
+            backButton.setDisable(false);
+            nextButton.setText("↺ New Project");
+            nextButton.setDisable(false);
+        } else {
+            stepIndicatorLabel.setText("Step " + (step + 1) + " of " + TOTAL_STEPS);
+            backButton.setDisable(step == 0);
+            boolean isLast = step == TOTAL_STEPS - 1;
+            nextButton.setText(isLast ? "↺ New Project" : "Next →");
+            nextButton.setDisable(false);
+        }
     }
 
     // ── Guides panel ──────────────────────────────────────────────────────────

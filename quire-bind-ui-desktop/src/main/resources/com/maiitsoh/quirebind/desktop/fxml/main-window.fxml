@@ -86,16 +86,57 @@
                     </VBox>
 
                     <!-- Batch pane -->
-                    <VBox fx:id="batchPane" spacing="8" visible="false" managed="false">
-                        <Label text="Select a .quire batch config to process multiple jobs."
-                               styleClass="step-description" wrapText="true"/>
+                    <VBox fx:id="batchPane" spacing="10" visible="false" managed="false">
+
+                        <!-- 1. Template .quire -->
+                        <Label text="1. Select binding template (.quire)"
+                               styleClass="field-label"/>
                         <HBox spacing="8" alignment="CENTER_LEFT">
-                            <TextField fx:id="quirePathField" promptText="No .quire file selected"
+                            <TextField fx:id="quirePathField" promptText="No template selected"
                                        editable="false" HBox.hgrow="ALWAYS"/>
                             <Button text="Browse…" onAction="#handleBrowseQuire"
                                     styleClass="action-button"/>
                         </HBox>
                         <Label fx:id="jobCountLabel" styleClass="info-label"/>
+
+                        <Separator/>
+
+                        <!-- 2. Input PDFs -->
+                        <HBox spacing="8" alignment="CENTER_LEFT">
+                            <Label text="2. Input PDF files" styleClass="field-label"
+                                   HBox.hgrow="ALWAYS"/>
+                            <Button text="Add PDFs…" onAction="#handleBatchAddPdfs"
+                                    styleClass="action-button"/>
+                            <Button text="Remove" onAction="#handleBatchRemovePdf"
+                                    styleClass="action-button"/>
+                        </HBox>
+                        <ListView fx:id="batchPdfListView" prefHeight="120"/>
+
+                        <Separator/>
+
+                        <!-- 3. Output naming -->
+                        <Label text="3. Output naming" styleClass="field-label"/>
+                        <HBox spacing="0" styleClass="mode-toggle-bar">
+                            <ToggleButton fx:id="batchSuffixToggle" text="Add suffix"
+                                          styleClass="mode-toggle-left"/>
+                            <ToggleButton fx:id="batchFolderToggle" text="Output folder"
+                                          styleClass="mode-toggle-right"/>
+                        </HBox>
+                        <HBox fx:id="batchSuffixPane" spacing="6" alignment="CENTER_LEFT">
+                            <Label text="Suffix:" styleClass="field-label"/>
+                            <TextField fx:id="batchSuffixField" maxWidth="120" text="-imposed"/>
+                            <Label text="(e.g. book.pdf → book-imposed.pdf)"
+                                   styleClass="step-description"/>
+                        </HBox>
+                        <HBox fx:id="batchFolderPane" spacing="8" alignment="CENTER_LEFT"
+                              visible="false" managed="false">
+                            <TextField fx:id="batchOutputDirField"
+                                       promptText="No output folder selected"
+                                       editable="false" HBox.hgrow="ALWAYS"/>
+                            <Button text="Browse…" onAction="#handleBatchBrowseOutputDir"
+                                    styleClass="action-button"/>
+                        </HBox>
+
                     </VBox>
                 </VBox>
 
@@ -390,6 +431,26 @@
                         </VBox>
 
                     </HBox>
+                </VBox>
+
+                <!-- ─── Step Batch Run ───────────────────────────────────── -->
+                <VBox fx:id="stepBatchRun" styleClass="wizard-step" spacing="12"
+                      visible="false" managed="false">
+                    <Label text="Batch Processing" styleClass="step-title"/>
+                    <Label text="Review the queue below, then click Run to process all files."
+                           styleClass="step-description" wrapText="true"/>
+                    <Separator/>
+                    <HBox spacing="10" alignment="CENTER_LEFT">
+                        <Button fx:id="runBatchButton" text="Run Batch"
+                                onAction="#handleRunBatch" styleClass="primary-button"/>
+                        <javafx.scene.control.ProgressBar fx:id="batchProgressBar"
+                                prefWidth="220" progress="0" visible="false" managed="false"/>
+                        <Label fx:id="batchProgressLabel" styleClass="info-label"
+                               visible="false" managed="false"/>
+                    </HBox>
+                    <ListView fx:id="batchResultListView" VBox.vgrow="ALWAYS"/>
+                    <Label fx:id="batchResultSummaryLabel" styleClass="summary-label"
+                           wrapText="true"/>
                 </VBox>
 
             </StackPane>
