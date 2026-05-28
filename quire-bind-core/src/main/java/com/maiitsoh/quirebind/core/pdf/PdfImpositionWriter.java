@@ -278,21 +278,48 @@ public final class PdfImpositionWriter {
     private static void renderSewingHoles(
             PDPageContentStream cs, float halfW, float halfH,
             SewingConfig sewingConfig) throws IOException {
-        int numHoles = sewingConfig.getHoleCount();
         float mmToPt = 72f / 25.4f;
         float endMarginPt = (float) (sewingConfig.getEndMarginMm() * mmToPt);
         float y0 = endMarginPt;
         float y1 = halfH - endMarginPt;
         float dotSize = 3f;
+        float x = halfW - dotSize / 2f;
         cs.saveGraphicsState();
         cs.setNonStrokingColor(Color.BLACK);
+        if (sewingConfig.getStyle() == SewingConfig.SewingStyle.BANDED) {
+            renderBandedHoles(cs, x, y0, y1, dotSize, sewingConfig, mmToPt);
+        } else {
+            renderSimpleHoles(cs, x, y0, y1, dotSize, sewingConfig.getHoleCount());
+        }
+        cs.restoreGraphicsState();
+    }
+
+    private static void renderSimpleHoles(
+            PDPageContentStream cs, float x, float y0, float y1,
+            float dotSize, int numHoles) throws IOException {
         for (int i = 0; i < numHoles; i++) {
             float y = y0 + (float) i / (numHoles - 1) * (y1 - y0);
-            float x = halfW - dotSize / 2f;
             cs.addRect(x, y, dotSize, dotSize);
             cs.fill();
         }
-        cs.restoreGraphicsState();
+    }
+
+    private static void renderBandedHoles(
+            PDPageContentStream cs, float x, float y0, float y1,
+            float dotSize, SewingConfig cfg, float mmToPt) throws IOException {
+        int bands = cfg.getBandCount();
+        float halfBandPt = (float) (cfg.getBandWidthMm() * mmToPt) / 2f;
+        cs.addRect(x, y0, dotSize, dotSize);
+        cs.fill();
+        for (int k = 1; k <= bands; k++) {
+            float center = y0 + (float) k / (bands + 1) * (y1 - y0);
+            cs.addRect(x, center - halfBandPt, dotSize, dotSize);
+            cs.fill();
+            cs.addRect(x, center + halfBandPt, dotSize, dotSize);
+            cs.fill();
+        }
+        cs.addRect(x, y1, dotSize, dotSize);
+        cs.fill();
     }
 
     private static void renderFolio(

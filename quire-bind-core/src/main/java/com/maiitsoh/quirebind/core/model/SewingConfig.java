@@ -23,43 +23,74 @@ import java.util.Objects;
 /**
  * Configuration for sewing hole placement along the spine.
  *
- * <p>Holes are evenly distributed between a head end-margin and a tail end-margin,
- * following the standard Western bookbinding convention where the outermost holes
- * act as kettle-stitch anchors.
- *
+ * <p>Two styles are supported:
  * <ul>
- *   <li><b>holeCount</b> — total number of piercing holes (3 = pamphlet/kettle,
- *       5 = standard, 7+ = long books). Minimum 2.</li>
- *   <li><b>endMarginMm</b> — distance in millimetres from the head and tail of the
- *       spine to the first and last hole. Typical range 10–20 mm; default 15 mm.</li>
+ *   <li><b>SIMPLE</b> — holes evenly distributed between end margins; outermost holes act as
+ *       kettle-stitch anchors. Controlled by {@link #getHoleCount()} and
+ *       {@link #getEndMarginMm()}.</li>
+ *   <li><b>BANDED</b> — kettle stitches at head and tail of spine, with pairs of holes
+ *       straddling each band/tape. Total holes = 2 + 2 × bandCount. Controlled by
+ *       {@link #getBandCount()}, {@link #getBandWidthMm()}, and {@link #getEndMarginMm()}.</li>
  * </ul>
  */
 public final class SewingConfig {
 
-    private static final int DEFAULT_HOLE_COUNT = 5;
-    private static final double DEFAULT_END_MARGIN_MM = 15.0;
-
-    private final int holeCount;
-    private final double endMarginMm;
-
-    private SewingConfig(Builder builder) {
-        this.holeCount = builder.holeCount;
-        this.endMarginMm = builder.endMarginMm;
+    /** Determines how holes are distributed along the spine. */
+    public enum SewingStyle {
+        /** Evenly-spaced holes; outermost holes act as kettle stitches. */
+        SIMPLE,
+        /** Kettle stitches at head and tail; pairs of holes straddling each band/tape. */
+        BANDED
     }
 
-    /** Returns a {@link SewingConfig} with default values (5 holes, 15 mm end margin). */
+    private static final SewingStyle DEFAULT_STYLE = SewingStyle.SIMPLE;
+    private static final int DEFAULT_HOLE_COUNT = 5;
+    private static final double DEFAULT_END_MARGIN_MM = 15.0;
+    private static final int DEFAULT_BAND_COUNT = 3;
+    private static final double DEFAULT_BAND_WIDTH_MM = 10.0;
+
+    private final SewingStyle style;
+    private final int holeCount;
+    private final double endMarginMm;
+    private final int bandCount;
+    private final double bandWidthMm;
+
+    private SewingConfig(Builder builder) {
+        this.style = builder.style;
+        this.holeCount = builder.holeCount;
+        this.endMarginMm = builder.endMarginMm;
+        this.bandCount = builder.bandCount;
+        this.bandWidthMm = builder.bandWidthMm;
+    }
+
+    /** Returns a {@link SewingConfig} with default values (SIMPLE, 5 holes, 15 mm end margin). */
     public static SewingConfig defaults() {
         return builder().build();
     }
 
-    /** Returns the total number of sewing holes. */
+    /** Returns the sewing style. */
+    public SewingStyle getStyle() {
+        return style;
+    }
+
+    /** Returns the total number of sewing holes (SIMPLE mode). */
     public int getHoleCount() {
         return holeCount;
     }
 
-    /** Returns the distance in mm from the head/tail of the spine to the first/last hole. */
+    /** Returns the distance in mm from head/tail of the spine to the outermost hole. */
     public double getEndMarginMm() {
         return endMarginMm;
+    }
+
+    /** Returns the number of bands/tapes (BANDED mode). */
+    public int getBandCount() {
+        return bandCount;
+    }
+
+    /** Returns the band/tape width in mm (BANDED mode). */
+    public double getBandWidthMm() {
+        return bandWidthMm;
     }
 
     /** Returns a new {@link Builder}. */
@@ -70,14 +101,29 @@ public final class SewingConfig {
     /** Builder for {@link SewingConfig}. */
     public static final class Builder {
 
+        private SewingStyle style = DEFAULT_STYLE;
         private int holeCount = DEFAULT_HOLE_COUNT;
         private double endMarginMm = DEFAULT_END_MARGIN_MM;
+        private int bandCount = DEFAULT_BAND_COUNT;
+        private double bandWidthMm = DEFAULT_BAND_WIDTH_MM;
 
         private Builder() {
         }
 
         /**
-         * Sets the number of sewing holes.
+         * Sets the sewing style.
+         *
+         * @param style must not be null
+         * @return this builder
+         */
+        public Builder style(SewingStyle style) {
+            Objects.requireNonNull(style, "style");
+            this.style = style;
+            return this;
+        }
+
+        /**
+         * Sets the number of sewing holes (SIMPLE mode).
          *
          * @param holeCount must be at least 2
          * @return this builder
@@ -107,6 +153,37 @@ public final class SewingConfig {
             return this;
         }
 
+        /**
+         * Sets the number of bands/tapes (BANDED mode).
+         *
+         * @param bandCount must be at least 1
+         * @return this builder
+         * @throws IllegalArgumentException if {@code bandCount < 1}
+         */
+        public Builder bandCount(int bandCount) {
+            if (bandCount < 1) {
+                throw new IllegalArgumentException("bandCount must be >= 1, got: " + bandCount);
+            }
+            this.bandCount = bandCount;
+            return this;
+        }
+
+        /**
+         * Sets the band/tape width in millimetres (BANDED mode).
+         *
+         * @param bandWidthMm must be positive
+         * @return this builder
+         * @throws IllegalArgumentException if {@code bandWidthMm <= 0}
+         */
+        public Builder bandWidthMm(double bandWidthMm) {
+            if (bandWidthMm <= 0) {
+                throw new IllegalArgumentException(
+                        "bandWidthMm must be > 0, got: " + bandWidthMm);
+            }
+            this.bandWidthMm = bandWidthMm;
+            return this;
+        }
+
         /** Builds the {@link SewingConfig}. */
         public SewingConfig build() {
             return new SewingConfig(this);
@@ -121,20 +198,26 @@ public final class SewingConfig {
         if (!(obj instanceof SewingConfig other)) {
             return false;
         }
-        return holeCount == other.holeCount
-                && Double.compare(endMarginMm, other.endMarginMm) == 0;
+        return style == other.style
+                && holeCount == other.holeCount
+                && Double.compare(endMarginMm, other.endMarginMm) == 0
+                && bandCount == other.bandCount
+                && Double.compare(bandWidthMm, other.bandWidthMm) == 0;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(holeCount, endMarginMm);
+        return Objects.hash(style, holeCount, endMarginMm, bandCount, bandWidthMm);
     }
 
     @Override
     public String toString() {
         return "SewingConfig{"
-                + "holeCount=" + holeCount
+                + "style=" + style
+                + ", holeCount=" + holeCount
                 + ", endMarginMm=" + endMarginMm
+                + ", bandCount=" + bandCount
+                + ", bandWidthMm=" + bandWidthMm
                 + '}';
     }
 }

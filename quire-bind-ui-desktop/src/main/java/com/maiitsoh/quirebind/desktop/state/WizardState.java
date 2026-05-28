@@ -25,6 +25,7 @@ import com.maiitsoh.quirebind.core.model.FolioStyle;
 import com.maiitsoh.quirebind.core.model.PageSequence;
 import com.maiitsoh.quirebind.core.model.PaperSize;
 import com.maiitsoh.quirebind.core.model.ReadingDirection;
+import com.maiitsoh.quirebind.core.model.SewingConfig;
 import com.maiitsoh.quirebind.core.model.Signature;
 
 import java.nio.file.Path;
@@ -68,8 +69,11 @@ public final class WizardState {
     private boolean foldLines = false;
     private boolean stitchMarks = false;
     private boolean sewingHoles = false;
+    private SewingConfig.SewingStyle sewingStyle = SewingConfig.SewingStyle.SIMPLE;
     private int sewingHoleCount = 5;
     private double sewingEndMarginMm = 15.0;
+    private int sewingBandCount = 3;
+    private double sewingBandWidthMm = 10.0;
     private boolean trimLines = false;
 
     // Front/rear matter page counts (always multiples of 4; 0 = none)
@@ -242,6 +246,16 @@ public final class WizardState {
         this.sewingHoles = sewingHoles;
     }
 
+    /** Returns the sewing style (SIMPLE or BANDED). */
+    public SewingConfig.SewingStyle getSewingStyle() {
+        return sewingStyle;
+    }
+
+    /** Sets the sewing style. */
+    public void setSewingStyle(SewingConfig.SewingStyle sewingStyle) {
+        this.sewingStyle = sewingStyle;
+    }
+
     /** Returns the number of sewing holes. */
     public int getSewingHoleCount() {
         return sewingHoleCount;
@@ -260,6 +274,26 @@ public final class WizardState {
     /** Sets the end margin in mm for sewing hole placement. */
     public void setSewingEndMarginMm(double sewingEndMarginMm) {
         this.sewingEndMarginMm = sewingEndMarginMm;
+    }
+
+    /** Returns the number of bands/tapes for banded sewing. */
+    public int getSewingBandCount() {
+        return sewingBandCount;
+    }
+
+    /** Sets the number of bands/tapes. */
+    public void setSewingBandCount(int sewingBandCount) {
+        this.sewingBandCount = sewingBandCount;
+    }
+
+    /** Returns the band/tape width in mm. */
+    public double getSewingBandWidthMm() {
+        return sewingBandWidthMm;
+    }
+
+    /** Sets the band/tape width in mm. */
+    public void setSewingBandWidthMm(double sewingBandWidthMm) {
+        this.sewingBandWidthMm = sewingBandWidthMm;
     }
 
     /** Returns whether trim lines should be printed on the output. */
@@ -424,8 +458,11 @@ public final class WizardState {
         foldLines = false;
         stitchMarks = false;
         sewingHoles = false;
+        sewingStyle = SewingConfig.SewingStyle.SIMPLE;
         sewingHoleCount = 5;
         sewingEndMarginMm = 15.0;
+        sewingBandCount = 3;
+        sewingBandWidthMm = 10.0;
         trimLines = false;
         frontMatterPageCount = 0;
         rearMatterPageCount = 0;

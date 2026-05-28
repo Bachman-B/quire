@@ -350,6 +350,24 @@ class PdfImpositionWriterTest {
     }
 
     @Test
+    void writesWithBandedSewingHoles() throws IOException {
+        Path src = createSourcePdf(4);
+        Path out = tempDir.resolve("out.pdf");
+        List<Signature> sigs = imposeFourContentPages(src);
+        SewingConfig sc = SewingConfig.builder()
+                .style(SewingConfig.SewingStyle.BANDED)
+                .bandCount(3)
+                .bandWidthMm(8.0)
+                .endMarginMm(12.0)
+                .build();
+        MarkConfig marks = MarkConfig.builder().sewingHoles(true).sewingConfig(sc).build();
+        PdfImpositionWriter.write(sigs, src, out, PaperSize.A4, marks, null);
+        try (PDDocument doc = Loader.loadPDF(out.toFile())) {
+            assertEquals(2, doc.getNumberOfPages());
+        }
+    }
+
+    @Test
     void writesWithFolioBottomOuter() throws IOException {
         Path src = createSourcePdf(4);
         Path out = tempDir.resolve("out.pdf");

@@ -18,6 +18,7 @@
  */
 package com.maiitsoh.quirebind.core.model;
 
+import com.maiitsoh.quirebind.core.model.SewingConfig.SewingStyle;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -27,18 +28,37 @@ class SewingConfigTest {
     @Test
     void defaultsHaveExpectedValues() {
         SewingConfig cfg = SewingConfig.defaults();
+        assertEquals(SewingStyle.SIMPLE, cfg.getStyle());
         assertEquals(5, cfg.getHoleCount());
         assertEquals(15.0, cfg.getEndMarginMm());
+        assertEquals(3, cfg.getBandCount());
+        assertEquals(10.0, cfg.getBandWidthMm());
     }
 
     @Test
-    void builderSetsAllFields() {
+    void builderSetsAllSimpleFields() {
         SewingConfig cfg = SewingConfig.builder()
+                .style(SewingStyle.SIMPLE)
                 .holeCount(7)
                 .endMarginMm(12.5)
                 .build();
+        assertEquals(SewingStyle.SIMPLE, cfg.getStyle());
         assertEquals(7, cfg.getHoleCount());
         assertEquals(12.5, cfg.getEndMarginMm());
+    }
+
+    @Test
+    void builderSetsAllBandedFields() {
+        SewingConfig cfg = SewingConfig.builder()
+                .style(SewingStyle.BANDED)
+                .bandCount(5)
+                .bandWidthMm(8.0)
+                .endMarginMm(12.0)
+                .build();
+        assertEquals(SewingStyle.BANDED, cfg.getStyle());
+        assertEquals(5, cfg.getBandCount());
+        assertEquals(8.0, cfg.getBandWidthMm());
+        assertEquals(12.0, cfg.getEndMarginMm());
     }
 
     @Test
@@ -60,11 +80,36 @@ class SewingConfigTest {
     }
 
     @Test
+    void bandCountZeroThrows() {
+        assertThrows(IllegalArgumentException.class,
+                () -> SewingConfig.builder().bandCount(0).build());
+    }
+
+    @Test
+    void bandWidthMmZeroThrows() {
+        assertThrows(IllegalArgumentException.class,
+                () -> SewingConfig.builder().bandWidthMm(0).build());
+    }
+
+    @Test
+    void bandWidthMmNegativeThrows() {
+        assertThrows(IllegalArgumentException.class,
+                () -> SewingConfig.builder().bandWidthMm(-1).build());
+    }
+
+    @Test
     void equalsSameValues() {
         SewingConfig a = SewingConfig.builder().holeCount(5).endMarginMm(15.0).build();
         SewingConfig b = SewingConfig.builder().holeCount(5).endMarginMm(15.0).build();
         assertEquals(a, b);
         assertEquals(a.hashCode(), b.hashCode());
+    }
+
+    @Test
+    void equalsDifferentStyle() {
+        SewingConfig a = SewingConfig.builder().style(SewingStyle.SIMPLE).build();
+        SewingConfig b = SewingConfig.builder().style(SewingStyle.BANDED).build();
+        assertNotEquals(a, b);
     }
 
     @Test
@@ -78,6 +123,20 @@ class SewingConfigTest {
     void equalsDifferentEndMargin() {
         SewingConfig a = SewingConfig.builder().endMarginMm(10.0).build();
         SewingConfig b = SewingConfig.builder().endMarginMm(20.0).build();
+        assertNotEquals(a, b);
+    }
+
+    @Test
+    void equalsDifferentBandCount() {
+        SewingConfig a = SewingConfig.builder().style(SewingStyle.BANDED).bandCount(2).build();
+        SewingConfig b = SewingConfig.builder().style(SewingStyle.BANDED).bandCount(4).build();
+        assertNotEquals(a, b);
+    }
+
+    @Test
+    void equalsDifferentBandWidthMm() {
+        SewingConfig a = SewingConfig.builder().style(SewingStyle.BANDED).bandWidthMm(8.0).build();
+        SewingConfig b = SewingConfig.builder().style(SewingStyle.BANDED).bandWidthMm(12.0).build();
         assertNotEquals(a, b);
     }
 
@@ -98,9 +157,19 @@ class SewingConfigTest {
     }
 
     @Test
-    void toStringContainsFields() {
+    void toStringContainsSimpleFields() {
         String s = SewingConfig.builder().holeCount(3).endMarginMm(10.0).build().toString();
+        assertTrue(s.contains("style=SIMPLE"));
         assertTrue(s.contains("holeCount=3"));
         assertTrue(s.contains("endMarginMm=10.0"));
+    }
+
+    @Test
+    void toStringContainsBandedFields() {
+        String s = SewingConfig.builder()
+                .style(SewingStyle.BANDED).bandCount(4).bandWidthMm(9.0).build().toString();
+        assertTrue(s.contains("style=BANDED"));
+        assertTrue(s.contains("bandCount=4"));
+        assertTrue(s.contains("bandWidthMm=9.0"));
     }
 }

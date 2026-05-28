@@ -263,17 +263,38 @@
                                 <CheckBox fx:id="stitchMarksCheck" text="Stitch marks"/>
                                 <VBox spacing="3">
                                     <CheckBox fx:id="sewingHolesCheck" text="Sewing holes"/>
-                                    <HBox fx:id="sewingHolesParams" spacing="6"
-                                          alignment="CENTER_LEFT" disable="true">
+                                    <VBox fx:id="sewingHolesParams" spacing="4" disable="true">
                                         <padding><Insets left="18"/></padding>
-                                        <Label text="Holes:" styleClass="field-label"/>
-                                        <Spinner fx:id="sewingHoleCountSpinner"
-                                                 maxWidth="58" editable="true"/>
-                                        <Label text="End margin:" styleClass="field-label"/>
-                                        <TextField fx:id="sewingEndMarginField"
-                                                   maxWidth="46" promptText="15"/>
-                                        <Label text="mm"/>
-                                    </HBox>
+                                        <HBox spacing="0" styleClass="mode-toggle-bar">
+                                            <ToggleButton fx:id="sewingSimpleToggle" text="Simple"
+                                                          styleClass="mode-toggle-left"/>
+                                            <ToggleButton fx:id="sewingBandedToggle" text="Banded"
+                                                          styleClass="mode-toggle-right"/>
+                                        </HBox>
+                                        <HBox fx:id="sewingSimpleParams" spacing="6"
+                                              alignment="CENTER_LEFT">
+                                            <Label text="Holes:" styleClass="field-label"/>
+                                            <Spinner fx:id="sewingHoleCountSpinner"
+                                                     maxWidth="58" editable="true"/>
+                                        </HBox>
+                                        <HBox fx:id="sewingBandedParams" spacing="6"
+                                              alignment="CENTER_LEFT"
+                                              visible="false" managed="false">
+                                            <Label text="Bands:" styleClass="field-label"/>
+                                            <Spinner fx:id="sewingBandCountSpinner"
+                                                     maxWidth="58" editable="true"/>
+                                            <Label text="Width:" styleClass="field-label"/>
+                                            <TextField fx:id="sewingBandWidthField"
+                                                       maxWidth="46" promptText="10"/>
+                                            <Label text="mm"/>
+                                        </HBox>
+                                        <HBox spacing="6" alignment="CENTER_LEFT">
+                                            <Label text="End margin:" styleClass="field-label"/>
+                                            <TextField fx:id="sewingEndMarginField"
+                                                       maxWidth="46" promptText="15"/>
+                                            <Label text="mm"/>
+                                        </HBox>
+                                    </VBox>
                                 </VBox>
                                 <CheckBox fx:id="trimLinesCheck"   text="Trim lines"/>
                                 <Separator/>

@@ -82,6 +82,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.control.ToggleGroup;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
@@ -159,8 +160,14 @@ public final class MainController implements Initializable {
     @FXML private CheckBox foldLinesCheck;
     @FXML private CheckBox stitchMarksCheck;
     @FXML private CheckBox sewingHolesCheck;
-    @FXML private javafx.scene.layout.HBox sewingHolesParams;
+    @FXML private VBox sewingHolesParams;
+    @FXML private ToggleButton sewingSimpleToggle;
+    @FXML private ToggleButton sewingBandedToggle;
+    @FXML private HBox sewingSimpleParams;
+    @FXML private HBox sewingBandedParams;
     @FXML private Spinner<Integer> sewingHoleCountSpinner;
+    @FXML private Spinner<Integer> sewingBandCountSpinner;
+    @FXML private TextField sewingBandWidthField;
     @FXML private TextField sewingEndMarginField;
     @FXML private CheckBox trimLinesCheck;
     @FXML private ComboBox<FolioStyle> bodyFolioStyleCombo;
@@ -186,6 +193,7 @@ public final class MainController implements Initializable {
     private int currentStep = 0;
     private ToggleGroup modeToggleGroup;
     private ToggleGroup paddingToggleGroup;
+    private ToggleGroup sewingStyleToggleGroup;
     private final Set<Integer> expandedSignatures = new HashSet<>();
     private final Set<String> collapsedZones = new HashSet<>();
     private final Map<Integer, Image> thumbnailCache = new HashMap<>();
@@ -272,9 +280,19 @@ public final class MainController implements Initializable {
         sewingHoleCountSpinner.setValueFactory(
             new SpinnerValueFactory.IntegerSpinnerValueFactory(3, 9, 5));
         sewingHoleCountSpinner.setEditable(true);
+        sewingBandCountSpinner.setValueFactory(
+            new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 7, 3));
+        sewingBandCountSpinner.setEditable(true);
+        sewingBandWidthField.setText("10");
         sewingEndMarginField.setText("15");
         sewingHolesCheck.selectedProperty().addListener(
             (obs, o, n) -> sewingHolesParams.setDisable(!n));
+        sewingStyleToggleGroup = new ToggleGroup();
+        sewingSimpleToggle.setToggleGroup(sewingStyleToggleGroup);
+        sewingBandedToggle.setToggleGroup(sewingStyleToggleGroup);
+        sewingSimpleToggle.setSelected(true);
+        sewingStyleToggleGroup.selectedToggleProperty().addListener(
+            (obs, oldT, newT) -> onSewingStyleToggleChanged(newT));
 
         // Page list with collapsable signature headers
         pageListView.setCellFactory(lv -> new PageListCell(this::toggleSignatureCollapse));
@@ -321,7 +339,10 @@ public final class MainController implements Initializable {
         rearStartNumberSpinner.getValueFactory().setValue(1);
         folioPositionCombo.setValue(FolioPosition.BOTTOM_OUTER);
         suppressFirstFolioCheck.setSelected(false);
+        sewingStyleToggleGroup.selectToggle(sewingSimpleToggle);
         sewingHoleCountSpinner.getValueFactory().setValue(5);
+        sewingBandCountSpinner.getValueFactory().setValue(3);
+        sewingBandWidthField.setText("10");
         sewingEndMarginField.setText("15");
         sewingHolesParams.setDisable(true);
         showStep(0);
@@ -443,6 +464,16 @@ public final class MainController implements Initializable {
         }
         state.setPaddingPosition(
             selected == padAfterToggle ? PaddingPosition.AFTER : PaddingPosition.BEFORE);
+    }
+
+    private void onSewingStyleToggleChanged(Toggle selected) {
+        if (selected == null) {
+            sewingStyleToggleGroup.selectToggle(sewingSimpleToggle);
+            return;
+        }
+        boolean isBanded = selected == sewingBandedToggle;
+        showNode(sewingSimpleParams, !isBanded);
+        showNode(sewingBandedParams, isBanded);
     }
 
     private void refreshDiagram() {
@@ -1250,8 +1281,11 @@ public final class MainController implements Initializable {
         collectMarksState();
         SewingConfig sewingConfig = state.isSewingHoles()
             ? SewingConfig.builder()
+                .style(state.getSewingStyle())
                 .holeCount(state.getSewingHoleCount())
                 .endMarginMm(state.getSewingEndMarginMm())
+                .bandCount(state.getSewingBandCount())
+                .bandWidthMm(state.getSewingBandWidthMm())
                 .build()
             : null;
         MarkConfig markConfig = MarkConfig.builder()
@@ -1395,8 +1429,19 @@ public final class MainController implements Initializable {
         state.setFoldLines(foldLinesCheck.isSelected());
         state.setStitchMarks(stitchMarksCheck.isSelected());
         state.setSewingHoles(sewingHolesCheck.isSelected());
+        state.setSewingStyle(sewingBandedToggle.isSelected()
+            ? SewingConfig.SewingStyle.BANDED : SewingConfig.SewingStyle.SIMPLE);
         if (sewingHoleCountSpinner.getValue() != null) {
             state.setSewingHoleCount(sewingHoleCountSpinner.getValue());
+        }
+        if (sewingBandCountSpinner.getValue() != null) {
+            state.setSewingBandCount(sewingBandCountSpinner.getValue());
+        }
+        try {
+            double bw = Double.parseDouble(sewingBandWidthField.getText().trim());
+            state.setSewingBandWidthMm(bw > 0 ? bw : 10.0);
+        } catch (NumberFormatException ignored) {
+            state.setSewingBandWidthMm(10.0);
         }
         try {
             double margin = Double.parseDouble(sewingEndMarginField.getText().trim());
