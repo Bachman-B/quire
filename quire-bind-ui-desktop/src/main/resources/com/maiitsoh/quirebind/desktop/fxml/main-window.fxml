@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Menu?>
+<?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.SeparatorMenuItem?>
+<?import javafx.scene.control.Spinner?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Priority?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.maiitsoh.quirebind.desktop.controller.MainController"
+            styleClass="root-pane">
+
+    <!-- ═══ Menu bar ════════════════════════════════════════════════════════ -->
+    <top>
+        <MenuBar>
+            <Menu text="_File">
+                <MenuItem text="_New Project" onAction="#handleMenuNewProject"/>
+                <MenuItem text="_Open PDF…"   onAction="#handleMenuOpenPdf"/>
+                <SeparatorMenuItem/>
+                <MenuItem text="E_xit" onAction="#handleMenuExit"/>
+            </Menu>
+            <Menu text="_Help">
+                <MenuItem text="_About QuireBind" onAction="#handleAbout"/>
+            </Menu>
+        </MenuBar>
+    </top>
+
+    <!-- ═══ Wizard content ══════════════════════════════════════════════════ -->
+    <center>
+        <VBox styleClass="wizard-container">
+
+            <!-- Step indicator strip -->
+            <HBox styleClass="step-indicator">
+                <Label fx:id="stepIndicatorLabel" text="Step 1 of 4" styleClass="step-indicator-label"/>
+            </HBox>
+
+            <!-- Step panels (only one visible at a time) -->
+            <StackPane fx:id="wizardStack" styleClass="wizard-stack" VBox.vgrow="ALWAYS">
+
+                <!-- ─── Step 1: Load PDF ─────────────────────────────────── -->
+                <VBox fx:id="stepLoad" styleClass="wizard-step" spacing="12">
+                    <Label text="Load Source PDF" styleClass="step-title"/>
+                    <Label text="Select the PDF you want to impose for bookbinding."
+                           styleClass="step-description" wrapText="true"/>
+                    <Separator/>
+                    <HBox spacing="8" alignment="CENTER_LEFT">
+                        <TextField fx:id="pdfPathField" promptText="No file selected"
+                                   editable="false" HBox.hgrow="ALWAYS"/>
+                        <Button text="Browse…" onAction="#handleBrowseInput" styleClass="action-button"/>
+                    </HBox>
+                    <Label fx:id="pageCountLabel" styleClass="info-label"/>
+                </VBox>
+
+                <!-- ─── Step 2: Binding options ──────────────────────────── -->
+                <VBox fx:id="stepOptions" styleClass="wizard-step" spacing="12" visible="false" managed="false">
+                    <Label text="Binding Options" styleClass="step-title"/>
+                    <Label text="Configure how the pages will be imposed."
+                           styleClass="step-description" wrapText="true"/>
+                    <Separator/>
+                    <GridPane hgap="12" vgap="10">
+                        <columnConstraints>
+                            <ColumnConstraints minWidth="160" maxWidth="200"/>
+                            <ColumnConstraints hgrow="ALWAYS"/>
+                        </columnConstraints>
+
+                        <Label text="Binding technique:" GridPane.rowIndex="0" GridPane.columnIndex="0"
+                               styleClass="field-label"/>
+                        <ComboBox fx:id="techniqueCombo" GridPane.rowIndex="0" GridPane.columnIndex="1"
+                                  maxWidth="Infinity"/>
+
+                        <Label text="Paper size:" GridPane.rowIndex="1" GridPane.columnIndex="0"
+                               styleClass="field-label"/>
+                        <ComboBox fx:id="paperSizeCombo" GridPane.rowIndex="1" GridPane.columnIndex="1"
+                                  maxWidth="Infinity"/>
+
+                        <Label text="Sheets per signature:" GridPane.rowIndex="2" GridPane.columnIndex="0"
+                               styleClass="field-label"/>
+                        <Spinner fx:id="sigSizeSpinner" GridPane.rowIndex="2" GridPane.columnIndex="1"
+                                 maxWidth="120"/>
+
+                        <Label text="Reading direction:" GridPane.rowIndex="3" GridPane.columnIndex="0"
+                               styleClass="field-label"/>
+                        <ComboBox fx:id="directionCombo" GridPane.rowIndex="3" GridPane.columnIndex="1"
+                                  maxWidth="Infinity"/>
+
+                        <Label text="Paper thickness (mm):" GridPane.rowIndex="4" GridPane.columnIndex="0"
+                               styleClass="field-label"/>
+                        <TextField fx:id="thicknessField" GridPane.rowIndex="4" GridPane.columnIndex="1"
+                                   promptText="Leave blank to skip creep" maxWidth="180"/>
+                    </GridPane>
+                </VBox>
+
+                <!-- ─── Step 3: Preview ──────────────────────────────────── -->
+                <VBox fx:id="stepPreview" styleClass="wizard-step" spacing="12" visible="false" managed="false">
+                    <Label text="Imposition Preview" styleClass="step-title"/>
+                    <Label text="Review the computed signature layout before exporting."
+                           styleClass="step-description" wrapText="true"/>
+                    <Separator/>
+                    <Label fx:id="impositionSummaryLabel" styleClass="summary-label"/>
+                    <TableView fx:id="signaturesTable" VBox.vgrow="ALWAYS">
+                        <columns>
+                            <TableColumn fx:id="colSigIndex"  text="#"      prefWidth="50"/>
+                            <TableColumn fx:id="colPageCount" text="Pages"  prefWidth="80"/>
+                            <TableColumn fx:id="colSheetCount" text="Sheets" prefWidth="80"/>
+                            <TableColumn fx:id="colCreep"     text="Creep"  prefWidth="160"/>
+                        </columns>
+                        <placeholder><Label text="No imposition data"/></placeholder>
+                    </TableView>
+                </VBox>
+
+                <!-- ─── Step 4: Export ───────────────────────────────────── -->
+                <VBox fx:id="stepExport" styleClass="wizard-step" spacing="12" visible="false" managed="false">
+                    <Label text="Export Imposed PDF" styleClass="step-title"/>
+                    <Label text="Choose an output location and export the imposed PDF."
+                           styleClass="step-description" wrapText="true"/>
+                    <Separator/>
+                    <HBox spacing="8" alignment="CENTER_LEFT">
+                        <TextField fx:id="outputPathField" promptText="No output file chosen"
+                                   editable="false" HBox.hgrow="ALWAYS"/>
+                        <Button text="Browse…" onAction="#handleBrowseOutput" styleClass="action-button"/>
+                    </HBox>
+                    <Button fx:id="exportButton" text="Export PDF" onAction="#handleExport"
+                            styleClass="primary-button" maxWidth="Infinity"/>
+                    <Label fx:id="exportResultLabel" styleClass="success-label" wrapText="true"/>
+                </VBox>
+
+            </StackPane>
+
+            <!-- Navigation bar -->
+            <HBox styleClass="wizard-nav" spacing="8" alignment="CENTER_RIGHT">
+                <padding><Insets top="8" right="16" bottom="8" left="16"/></padding>
+                <Region HBox.hgrow="ALWAYS"/>
+                <Button fx:id="backButton" text="← Back"  onAction="#handleBack"  disable="true"/>
+                <Button fx:id="nextButton" text="Next →"  onAction="#handleNext"  styleClass="primary-button"/>
+            </HBox>
+
+        </VBox>
+    </center>
+
+    <!-- ═══ Status bar ═══════════════════════════════════════════════════════ -->
+    <bottom>
+        <HBox styleClass="status-bar">
+            <padding><Insets top="4" right="12" bottom="4" left="12"/></padding>
+            <Label fx:id="statusLabel" text="Ready." styleClass="status-label"/>
+        </HBox>
+    </bottom>
+
+</BorderPane>

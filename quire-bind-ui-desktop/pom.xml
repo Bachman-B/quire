@@ -15,6 +15,10 @@
     <name>QuireBind Desktop UI</name>
     <description>JavaFX desktop application</description>
 
+    <properties>
+        <javafx-maven-plugin.version>0.0.8</javafx-maven-plugin.version>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>com.maiitsoh.quirebind</groupId>
@@ -45,4 +49,17 @@
             <artifactId>junit-jupiter-engine</artifactId>
         </dependency>
     </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.openjfx</groupId>
+                <artifactId>javafx-maven-plugin</artifactId>
+                <version>${javafx-maven-plugin.version}</version>
+                <configuration>
+                    <mainClass>com.maiitsoh.quirebind.desktop.QuireBindDesktop</mainClass>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 </project>
