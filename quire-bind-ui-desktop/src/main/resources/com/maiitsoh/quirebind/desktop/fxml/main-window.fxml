@@ -23,6 +23,7 @@
 <?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.control.ScrollPane?>
 
 <BorderPane xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="com.maiitsoh.quirebind.desktop.controller.MainController"
@@ -110,7 +111,7 @@
                     <HBox spacing="20" VBox.vgrow="ALWAYS">
 
                         <!-- Form -->
-                        <VBox spacing="4" minWidth="240">
+                        <VBox spacing="8" minWidth="240">
                             <GridPane hgap="10" vgap="8">
                                 <columnConstraints>
                                     <ColumnConstraints minWidth="150" maxWidth="170"/>
@@ -152,6 +153,20 @@
                                            GridPane.rowIndex="4" GridPane.columnIndex="1"
                                            promptText="blank = no creep" maxWidth="140"/>
                             </GridPane>
+
+                            <!-- Padding position (group C only) -->
+                            <VBox fx:id="paddingPositionPane" spacing="4"
+                                  visible="false" managed="false">
+                                <Label text="Blank padding position:" styleClass="field-label"/>
+                                <HBox spacing="0" styleClass="mode-toggle-bar">
+                                    <ToggleButton fx:id="padAfterToggle" text="After content"
+                                                  styleClass="mode-toggle-left"/>
+                                    <ToggleButton fx:id="padBeforeToggle" text="Before content"
+                                                  styleClass="mode-toggle-right"/>
+                                </HBox>
+                                <Label text="Where blank pages are added to complete the last signature."
+                                       styleClass="step-description" wrapText="true"/>
+                            </VBox>
                         </VBox>
 
                         <!-- Diagram -->
@@ -169,7 +184,7 @@
                            styleClass="step-description" wrapText="true"/>
                     <Separator/>
 
-                    <!-- Editing toolbar -->
+                    <!-- Editing toolbar: blank/move operations -->
                     <HBox spacing="6">
                         <Button text="+ Blank before" onAction="#handleAddBlankBefore"
                                 styleClass="action-button"/>
@@ -183,8 +198,17 @@
                                 styleClass="action-button"/>
                     </HBox>
 
+                    <!-- Decorative page toolbar -->
+                    <HBox spacing="6">
+                        <Button text="+ Decorative front" onAction="#handleAddDecorativeFront"
+                                styleClass="action-button"/>
+                        <Button text="+ Decorative rear"  onAction="#handleAddDecorativeRear"
+                                styleClass="action-button"/>
+                    </HBox>
+
                     <ListView fx:id="pageListView" VBox.vgrow="ALWAYS"
                               styleClass="page-list"/>
+                    <Label fx:id="overflowLabel" styleClass="overflow-label" wrapText="true"/>
                     <Label fx:id="previewSummaryLabel" styleClass="summary-label"/>
                 </VBox>
 
@@ -199,31 +223,70 @@
                     <!-- Two-column: marks + table -->
                     <HBox spacing="20" VBox.vgrow="ALWAYS">
 
-                        <!-- Marks + export controls -->
-                        <VBox spacing="10" minWidth="220">
-                            <Label text="Output Marks" styleClass="section-label"/>
-                            <CheckBox fx:id="foldLinesCheck"   text="Fold lines"/>
-                            <CheckBox fx:id="stitchMarksCheck" text="Stitch marks"/>
-                            <CheckBox fx:id="sewingHolesCheck" text="Sewing holes"/>
-                            <CheckBox fx:id="trimLinesCheck"   text="Trim lines"/>
-                            <Separator/>
-                            <Label text="Output File" styleClass="section-label"/>
-                            <HBox spacing="8" alignment="CENTER_LEFT">
-                                <TextField fx:id="outputPathField"
-                                           promptText="No output chosen"
-                                           editable="false" HBox.hgrow="ALWAYS"/>
-                                <Button text="Browse…" onAction="#handleBrowseOutput"
-                                        styleClass="action-button"/>
-                            </HBox>
-                            <Button fx:id="exportButton" text="Export PDF"
-                                    onAction="#handleExport"
-                                    styleClass="primary-button" maxWidth="Infinity"/>
-                            <Button text="Save as .quire template…"
-                                    onAction="#handleSaveTemplate"
-                                    styleClass="action-button" maxWidth="Infinity"/>
-                            <Label fx:id="exportResultLabel" styleClass="success-label"
-                                   wrapText="true"/>
-                        </VBox>
+                        <!-- Marks, numbering + export controls -->
+                        <ScrollPane fitToWidth="true" VBox.vgrow="ALWAYS"
+                                    hbarPolicy="NEVER" vbarPolicy="AS_NEEDED"
+                                    styleClass="export-scroll">
+                            <VBox spacing="10" minWidth="220">
+                                <padding><Insets top="2" right="4" bottom="2" left="0"/></padding>
+                                <Label text="Output Marks" styleClass="section-label"/>
+                                <CheckBox fx:id="foldLinesCheck"   text="Fold lines"/>
+                                <CheckBox fx:id="stitchMarksCheck" text="Stitch marks"/>
+                                <CheckBox fx:id="sewingHolesCheck" text="Sewing holes"/>
+                                <CheckBox fx:id="trimLinesCheck"   text="Trim lines"/>
+                                <Separator/>
+                                <Label text="Page Numbering" styleClass="section-label"/>
+                                <GridPane hgap="8" vgap="6">
+                                    <columnConstraints>
+                                        <ColumnConstraints minWidth="110" maxWidth="130"/>
+                                        <ColumnConstraints hgrow="ALWAYS"/>
+                                    </columnConstraints>
+                                    <Label text="Body style:"
+                                           GridPane.rowIndex="0" GridPane.columnIndex="0"
+                                           styleClass="field-label"/>
+                                    <ComboBox fx:id="bodyFolioStyleCombo"
+                                              GridPane.rowIndex="0" GridPane.columnIndex="1"
+                                              maxWidth="Infinity"/>
+                                    <Label text="Front matter:"
+                                           GridPane.rowIndex="1" GridPane.columnIndex="0"
+                                           styleClass="field-label"/>
+                                    <ComboBox fx:id="frontMatterFolioStyleCombo"
+                                              GridPane.rowIndex="1" GridPane.columnIndex="1"
+                                              maxWidth="Infinity"/>
+                                    <Label text="Start number:"
+                                           GridPane.rowIndex="2" GridPane.columnIndex="0"
+                                           styleClass="field-label"/>
+                                    <Spinner fx:id="startNumberSpinner"
+                                             GridPane.rowIndex="2" GridPane.columnIndex="1"
+                                             maxWidth="80"/>
+                                    <Label text="Position:"
+                                           GridPane.rowIndex="3" GridPane.columnIndex="0"
+                                           styleClass="field-label"/>
+                                    <ComboBox fx:id="folioPositionCombo"
+                                              GridPane.rowIndex="3" GridPane.columnIndex="1"
+                                              maxWidth="Infinity"/>
+                                </GridPane>
+                                <CheckBox fx:id="suppressFirstFolioCheck"
+                                          text="Suppress folio on first page"/>
+                                <Separator/>
+                                <Label text="Output File" styleClass="section-label"/>
+                                <HBox spacing="8" alignment="CENTER_LEFT">
+                                    <TextField fx:id="outputPathField"
+                                               promptText="No output chosen"
+                                               editable="false" HBox.hgrow="ALWAYS"/>
+                                    <Button text="Browse…" onAction="#handleBrowseOutput"
+                                            styleClass="action-button"/>
+                                </HBox>
+                                <Button fx:id="exportButton" text="Export PDF"
+                                        onAction="#handleExport"
+                                        styleClass="primary-button" maxWidth="Infinity"/>
+                                <Button text="Save as .quire template…"
+                                        onAction="#handleSaveTemplate"
+                                        styleClass="action-button" maxWidth="Infinity"/>
+                                <Label fx:id="exportResultLabel" styleClass="success-label"
+                                       wrapText="true"/>
+                            </VBox>
+                        </ScrollPane>
 
                         <!-- Imposition summary table -->
                         <VBox spacing="6" HBox.hgrow="ALWAYS">

@@ -23,6 +23,8 @@ import com.maiitsoh.quirebind.core.binding.BindingGroupMapper;
 import com.maiitsoh.quirebind.core.imposition.ImpositionEngine;
 import com.maiitsoh.quirebind.core.model.BindingTechnique;
 import com.maiitsoh.quirebind.core.model.CreepConfig;
+import com.maiitsoh.quirebind.core.model.FolioPosition;
+import com.maiitsoh.quirebind.core.model.FolioStyle;
 import com.maiitsoh.quirebind.core.model.ImpositionGroup;
 import com.maiitsoh.quirebind.core.model.ImpositionLayout;
 import com.maiitsoh.quirebind.core.model.MarkConfig;
@@ -39,6 +41,7 @@ import com.maiitsoh.quirebind.core.pdf.PdfImpositionWriter;
 import com.maiitsoh.quirebind.core.pdf.PdfPageLoader;
 import com.maiitsoh.quirebind.desktop.diagram.BindingTechniqueDiagram;
 import com.maiitsoh.quirebind.desktop.state.WizardState;
+import com.maiitsoh.quirebind.desktop.state.WizardState.PaddingPosition;
 import com.maiitsoh.quirebind.desktop.state.WizardState.WizardMode;
 import com.maiitsoh.quirebind.desktop.template.QuireTemplateWriter;
 
@@ -79,8 +82,12 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.Set;
+import java.util.function.Consumer;
 
 /** Controls the four-step imposition wizard in the main window. */
 public final class MainController implements Initializable {
@@ -116,16 +123,25 @@ public final class MainController implements Initializable {
     @FXML private ComboBox<ReadingDirection> directionCombo;
     @FXML private TextField thicknessField;
     @FXML private StackPane diagramPane;
+    @FXML private ToggleButton padAfterToggle;
+    @FXML private ToggleButton padBeforeToggle;
+    @FXML private VBox paddingPositionPane;
 
     // ── Step 3: Preview / edit ────────────────────────────────────────────────
     @FXML private ListView<PageItem> pageListView;
     @FXML private Label previewSummaryLabel;
+    @FXML private Label overflowLabel;
 
     // ── Step 4: Export ───────────────────────────────────────────────────────
     @FXML private CheckBox foldLinesCheck;
     @FXML private CheckBox stitchMarksCheck;
     @FXML private CheckBox sewingHolesCheck;
     @FXML private CheckBox trimLinesCheck;
+    @FXML private ComboBox<FolioStyle> bodyFolioStyleCombo;
+    @FXML private ComboBox<FolioStyle> frontMatterFolioStyleCombo;
+    @FXML private Spinner<Integer> startNumberSpinner;
+    @FXML private ComboBox<FolioPosition> folioPositionCombo;
+    @FXML private CheckBox suppressFirstFolioCheck;
     @FXML private TableView<SignatureRow> signaturesTable;
     @FXML private TableColumn<SignatureRow, Number> colSigIndex;
     @FXML private TableColumn<SignatureRow, Number> colPageCount;
@@ -139,16 +155,26 @@ public final class MainController implements Initializable {
     private final WizardState state = new WizardState();
     private int currentStep = 0;
     private ToggleGroup modeToggleGroup;
+    private ToggleGroup paddingToggleGroup;
+    private final Set<Integer> collapsedSignatures = new HashSet<>();
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        // Mode toggle
+        // Mode toggle (step 1)
         modeToggleGroup = new ToggleGroup();
         singlePdfToggle.setToggleGroup(modeToggleGroup);
         batchToggle.setToggleGroup(modeToggleGroup);
         singlePdfToggle.setSelected(true);
         modeToggleGroup.selectedToggleProperty().addListener(
             (obs, oldT, newT) -> onModeToggleChanged(newT));
+
+        // Padding position toggle (step 2, group C only)
+        paddingToggleGroup = new ToggleGroup();
+        padAfterToggle.setToggleGroup(paddingToggleGroup);
+        padBeforeToggle.setToggleGroup(paddingToggleGroup);
+        padAfterToggle.setSelected(true);
+        paddingToggleGroup.selectedToggleProperty().addListener(
+            (obs, oldT, newT) -> onPaddingToggleChanged(newT));
 
         // Technique combo
         techniqueCombo.setItems(FXCollections.observableArrayList(BindingTechnique.values()));
@@ -163,28 +189,36 @@ public final class MainController implements Initializable {
         sigSizeSpinner.setValueFactory(
             new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 16, 4));
         sigSizeSpinner.setEditable(true);
+        sigSizeSpinner.valueProperty().addListener((obs, o, n) -> updateOverflow());
 
         // Reading direction
         directionCombo.setItems(FXCollections.observableArrayList(ReadingDirection.values()));
         directionCombo.setValue(ReadingDirection.LTR);
 
-        // Page list
-        pageListView.setCellFactory(lv -> new PageListCell());
-        pageListView.getSelectionModel().selectedItemProperty().addListener(
-            (obs, o, n) -> refreshPreviewSummary());
+        // Numbering controls (step 4)
+        bodyFolioStyleCombo.setItems(FXCollections.observableArrayList(FolioStyle.values()));
+        bodyFolioStyleCombo.setValue(FolioStyle.ARABIC);
+        frontMatterFolioStyleCombo.setItems(FXCollections.observableArrayList(FolioStyle.values()));
+        frontMatterFolioStyleCombo.setValue(FolioStyle.NONE);
+        startNumberSpinner.setValueFactory(
+            new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 9999, 1));
+        startNumberSpinner.setEditable(true);
+        folioPositionCombo.setItems(FXCollections.observableArrayList(FolioPosition.values()));
+        folioPositionCombo.setValue(FolioPosition.OUTER_MARGIN);
+
+        // Page list with collapsable signature headers
+        pageListView.setCellFactory(lv -> new PageListCell(this::toggleSignatureCollapse));
 
         // Imposition table columns
         colSigIndex.setCellValueFactory(r -> new SimpleIntegerProperty(r.getValue().index()));
-        colPageCount.setCellValueFactory(r -> new SimpleIntegerProperty(r.getValue().pageCount()));
+        colPageCount.setCellValueFactory(
+            r -> new SimpleIntegerProperty(r.getValue().pageCount()));
         colSheetCount.setCellValueFactory(
             r -> new SimpleIntegerProperty(r.getValue().sheetCount()));
         colCreep.setCellValueFactory(r -> new SimpleStringProperty(r.getValue().creepSummary()));
 
-        // Initial diagram
         refreshDiagram();
-        // Initial field visibility
         onTechniqueChanged();
-
         showStep(0);
     }
 
@@ -193,6 +227,7 @@ public final class MainController implements Initializable {
     @FXML
     private void handleMenuNewProject() {
         state.reset();
+        collapsedSignatures.clear();
         pdfPathField.clear();
         pageCountLabel.setText("");
         quirePathField.clear();
@@ -200,6 +235,11 @@ public final class MainController implements Initializable {
         outputPathField.clear();
         exportResultLabel.setText("");
         pageListView.getItems().clear();
+        bodyFolioStyleCombo.setValue(FolioStyle.ARABIC);
+        frontMatterFolioStyleCombo.setValue(FolioStyle.NONE);
+        startNumberSpinner.getValueFactory().setValue(1);
+        folioPositionCombo.setValue(FolioPosition.OUTER_MARGIN);
+        suppressFirstFolioCheck.setSelected(false);
         showStep(0);
         setStatus("New project.");
     }
@@ -239,7 +279,6 @@ public final class MainController implements Initializable {
 
     private void onModeToggleChanged(Toggle selected) {
         if (selected == null) {
-            // prevent deselection
             modeToggleGroup.selectToggle(singlePdfToggle);
             return;
         }
@@ -307,12 +346,19 @@ public final class MainController implements Initializable {
         }
         ImpositionGroup group = BindingGroupMapper.groupFor(t);
         boolean isGroupC = group == ImpositionGroup.C;
-        boolean needsFoldMarks = group == ImpositionGroup.B || group == ImpositionGroup.C;
-
         showNode(sigSizeSpinner, isGroupC);
         showNode(sigSizeLabel, isGroupC);
-
+        showNode(paddingPositionPane, isGroupC);
         refreshDiagram();
+    }
+
+    private void onPaddingToggleChanged(Toggle selected) {
+        if (selected == null) {
+            paddingToggleGroup.selectToggle(padAfterToggle);
+            return;
+        }
+        state.setPaddingPosition(
+            selected == padAfterToggle ? PaddingPosition.AFTER : PaddingPosition.BEFORE);
     }
 
     private void refreshDiagram() {
@@ -326,42 +372,151 @@ public final class MainController implements Initializable {
 
     // ── Step 3 actions ────────────────────────────────────────────────────────
 
-    @FXML
-    private void handleAddBlankBefore() {
-        int idx = pageListView.getSelectionModel().getSelectedIndex();
-        insertBlank(idx < 0 ? 0 : idx);
-    }
-
-    @FXML
-    private void handleAddBlankAfter() {
-        int idx = pageListView.getSelectionModel().getSelectedIndex();
-        insertBlank(idx < 0 ? pageListView.getItems().size() : idx + 1);
-    }
-
-    private void insertBlank(int position) {
+    /**
+     * Removes all existing COMPLETION_BLANK pages from the sequence, then re-inserts
+     * the exact number needed to fill the last signature at the chosen position.
+     */
+    private void applyDefaultPadding() {
         PageSequence seq = state.getPageSequence();
         if (seq == null) {
             return;
         }
-        QuirePage blank = QuirePage.builder()
-            .physicalPosition(position)
-            .pageType(PageType.COMPLETION_BLANK)
+        ImpositionGroup group = BindingGroupMapper.groupFor(state.getTechnique());
+        if (group != ImpositionGroup.C) {
+            return;
+        }
+        int pps = state.getPagesPerSignature() * 4;
+
+        // Strip old completion blanks so we don't double-count
+        List<QuirePage> pages = new ArrayList<>(seq.getPages());
+        pages.removeIf(p -> p.getPageType() == PageType.COMPLETION_BLANK);
+        PageSequence clean = new PageSequence(pages);
+        state.setPageSequence(clean);
+
+        int total = clean.pageCount();
+        int remainder = total % pps;
+        if (remainder == 0) {
+            return;
+        }
+        int blanksNeeded = pps - remainder;
+
+        for (int i = 0; i < blanksNeeded; i++) {
+            QuirePage blank = QuirePage.builder()
+                .physicalPosition(0)
+                .pageType(PageType.COMPLETION_BLANK)
+                .build();
+            if (state.getPaddingPosition() == PaddingPosition.BEFORE) {
+                clean.insertPage(0, blank);
+            } else {
+                clean.insertPage(clean.pageCount(), blank);
+            }
+        }
+        clean.reindex();
+    }
+
+    @FXML
+    private void handleAddDecorativeFront() {
+        PageSequence seq = state.getPageSequence();
+        if (seq == null) {
+            return;
+        }
+        QuirePage dec = QuirePage.builder()
+            .physicalPosition(0)
+            .pageType(PageType.AESTHETIC)
             .build();
-        seq.insertPage(position, blank);
+        seq.insertPage(0, dec);
         seq.reindex();
         rebuildPageList();
-        pageListView.getSelectionModel().select(position);
-        setStatus("Blank page inserted at position " + (position + 1) + ".");
+        pageListView.getSelectionModel().select(0);
+        setStatus("Decorative page added at front.");
+    }
+
+    @FXML
+    private void handleAddDecorativeRear() {
+        PageSequence seq = state.getPageSequence();
+        if (seq == null) {
+            return;
+        }
+        QuirePage dec = QuirePage.builder()
+            .physicalPosition(0)
+            .pageType(PageType.AESTHETIC)
+            .build();
+        seq.insertPage(seq.pageCount(), dec);
+        seq.reindex();
+        rebuildPageList();
+        pageListView.getSelectionModel().selectLast();
+        setStatus("Decorative page added at rear.");
+    }
+
+    @FXML
+    private void handleAddBlankBefore() {
+        int listIdx = pageListView.getSelectionModel().getSelectedIndex();
+        PageSequence seq = state.getPageSequence();
+        if (seq == null) {
+            return;
+        }
+        int seqPos;
+        if (listIdx < 0) {
+            seqPos = 0;
+        } else {
+            PageItem selected = pageListView.getItems().get(listIdx);
+            seqPos = selected.isHeader() ? firstSeqIndexOfSig(selected.sigNum()) : selected.seqIndex();
+        }
+        insertBlank(seqPos);
+    }
+
+    @FXML
+    private void handleAddBlankAfter() {
+        int listIdx = pageListView.getSelectionModel().getSelectedIndex();
+        PageSequence seq = state.getPageSequence();
+        if (seq == null) {
+            return;
+        }
+        int seqPos;
+        if (listIdx < 0) {
+            seqPos = seq.pageCount();
+        } else {
+            PageItem selected = pageListView.getItems().get(listIdx);
+            seqPos = selected.isHeader()
+                ? lastSeqIndexOfSig(selected.sigNum()) + 1
+                : selected.seqIndex() + 1;
+        }
+        insertBlank(seqPos);
+    }
+
+    private void insertBlank(int seqPos) {
+        PageSequence seq = state.getPageSequence();
+        if (seq == null) {
+            return;
+        }
+        int clamped = Math.max(0, Math.min(seqPos, seq.pageCount()));
+        QuirePage blank = QuirePage.builder()
+            .physicalPosition(clamped)
+            .pageType(PageType.COMPLETION_BLANK)
+            .build();
+        seq.insertPage(clamped, blank);
+        seq.reindex();
+        rebuildPageList();
+        // Re-select the newly inserted blank
+        for (int i = 0; i < pageListView.getItems().size(); i++) {
+            PageItem pi = pageListView.getItems().get(i);
+            if (!pi.isHeader() && pi.seqIndex() == clamped) {
+                pageListView.getSelectionModel().select(i);
+                pageListView.scrollTo(i);
+                break;
+            }
+        }
+        setStatus("Blank inserted at position " + (clamped + 1) + ".");
     }
 
     @FXML
     private void handleRemovePage() {
-        int idx = pageListView.getSelectionModel().getSelectedIndex();
+        int listIdx = pageListView.getSelectionModel().getSelectedIndex();
         PageSequence seq = state.getPageSequence();
-        if (idx < 0 || seq == null) {
+        if (listIdx < 0 || seq == null) {
             return;
         }
-        PageItem item = pageListView.getItems().get(idx);
+        PageItem item = pageListView.getItems().get(listIdx);
         if (item.isHeader()) {
             return;
         }
@@ -373,116 +528,176 @@ public final class MainController implements Initializable {
 
     @FXML
     private void handleMovePageUp() {
-        int idx = pageListView.getSelectionModel().getSelectedIndex();
+        int listIdx = pageListView.getSelectionModel().getSelectedIndex();
         PageSequence seq = state.getPageSequence();
-        if (idx <= 0 || seq == null) {
+        if (listIdx < 0 || seq == null) {
             return;
         }
-        PageItem item = pageListView.getItems().get(idx);
-        if (item.isHeader()) {
+        PageItem item = pageListView.getItems().get(listIdx);
+        if (item.isHeader() || item.seqIndex() == 0) {
             return;
         }
-        int seqIdx = item.seqIndex();
-        if (seqIdx > 0) {
-            seq.movePage(seqIdx, seqIdx - 1);
-            seq.reindex();
-            rebuildPageList();
-            // reselect the moved item
-            for (int i = 0; i < pageListView.getItems().size(); i++) {
-                PageItem pi = pageListView.getItems().get(i);
-                if (!pi.isHeader() && pi.seqIndex() == seqIdx - 1) {
-                    pageListView.getSelectionModel().select(i);
-                    break;
-                }
-            }
-        }
+        int from = item.seqIndex();
+        seq.movePage(from, from - 1);
+        seq.reindex();
+        rebuildPageList();
+        reselectBySeqIndex(from - 1);
     }
 
     @FXML
     private void handleMovePageDown() {
-        int idx = pageListView.getSelectionModel().getSelectedIndex();
+        int listIdx = pageListView.getSelectionModel().getSelectedIndex();
         PageSequence seq = state.getPageSequence();
-        if (idx < 0 || seq == null) {
+        if (listIdx < 0 || seq == null) {
             return;
         }
-        PageItem item = pageListView.getItems().get(idx);
-        if (item.isHeader()) {
+        PageItem item = pageListView.getItems().get(listIdx);
+        if (item.isHeader() || item.seqIndex() >= seq.pageCount() - 1) {
             return;
         }
-        int seqIdx = item.seqIndex();
-        if (seqIdx < seq.pageCount() - 1) {
-            seq.movePage(seqIdx, seqIdx + 1);
-            seq.reindex();
-            rebuildPageList();
-            for (int i = 0; i < pageListView.getItems().size(); i++) {
-                PageItem pi = pageListView.getItems().get(i);
-                if (!pi.isHeader() && pi.seqIndex() == seqIdx + 1) {
-                    pageListView.getSelectionModel().select(i);
-                    break;
-                }
+        int from = item.seqIndex();
+        seq.movePage(from, from + 1);
+        seq.reindex();
+        rebuildPageList();
+        reselectBySeqIndex(from + 1);
+    }
+
+    private void reselectBySeqIndex(int seqIndex) {
+        for (int i = 0; i < pageListView.getItems().size(); i++) {
+            PageItem pi = pageListView.getItems().get(i);
+            if (!pi.isHeader() && pi.seqIndex() == seqIndex) {
+                pageListView.getSelectionModel().select(i);
+                pageListView.scrollTo(i);
+                return;
             }
         }
     }
 
+    private int firstSeqIndexOfSig(int sigNum) {
+        for (PageItem pi : pageListView.getItems()) {
+            if (!pi.isHeader() && pi.sigNum() == sigNum) {
+                return pi.seqIndex();
+            }
+        }
+        return 0;
+    }
+
+    private int lastSeqIndexOfSig(int sigNum) {
+        int last = 0;
+        for (PageItem pi : pageListView.getItems()) {
+            if (!pi.isHeader() && pi.sigNum() == sigNum) {
+                last = pi.seqIndex();
+            }
+        }
+        return last;
+    }
+
+    private void toggleSignatureCollapse(int sigNum) {
+        if (collapsedSignatures.contains(sigNum)) {
+            collapsedSignatures.remove(sigNum);
+        } else {
+            collapsedSignatures.add(sigNum);
+        }
+        rebuildPageList();
+    }
+
     /**
-     * Rebuilds the page list items, inserting signature-boundary header rows
-     * based on the current pages-per-signature setting.
+     * Rebuilds the page list, inserting expandable/collapsable signature-boundary headers
+     * and pre-computing overflow/underflow for the current signature settings.
      */
     private void rebuildPageList() {
         PageSequence seq = state.getPageSequence();
         if (seq == null) {
             pageListView.setItems(FXCollections.emptyObservableList());
+            overflowLabel.setText("");
+            previewSummaryLabel.setText("");
             return;
         }
+
         List<QuirePage> pages = seq.getPages();
-        int pps = sigSizeSpinner.getValue() != null ? sigSizeSpinner.getValue() * 4 : 16;
         ImpositionGroup group = BindingGroupMapper.groupFor(
             techniqueCombo.getValue() != null
                 ? techniqueCombo.getValue() : BindingTechnique.SADDLE_STITCH);
+        int pps = (group == ImpositionGroup.C && sigSizeSpinner.getValue() != null)
+            ? sigSizeSpinner.getValue() * 4 : pages.size();
 
         ObservableList<PageItem> items = FXCollections.observableArrayList();
-        int sigNum = 1;
+        int currentSig = 0;
         for (int i = 0; i < pages.size(); i++) {
-            // Insert signature header at the start of each signature block (group C only)
-            if (group == ImpositionGroup.C && i % pps == 0) {
-                items.add(PageItem.header("── Signature " + sigNum + " ──"));
-                sigNum++;
-            } else if (group != ImpositionGroup.C && i == 0) {
-                items.add(PageItem.header("── Signature 1 ──"));
+            boolean isSigStart = (group == ImpositionGroup.C && i % pps == 0) || i == 0;
+            if (isSigStart) {
+                currentSig++;
+                boolean collapsed = collapsedSignatures.contains(currentSig);
+                String arrow = collapsed ? "▶" : "▼";
+                int sigPageCount = Math.min(pps, pages.size() - i);
+                String overflow = sigPageCount < pps
+                    ? "  ⚠ " + (pps - sigPageCount) + " short" : "";
+                items.add(PageItem.header(currentSig,
+                    arrow + " Signature " + currentSig
+                    + "  (" + sigPageCount + "/" + pps + " pages)" + overflow));
             }
-            QuirePage page = pages.get(i);
-            String label = pageLabel(page, i);
-            items.add(PageItem.page(i, label, page.getPageType()));
+            if (!collapsedSignatures.contains(currentSig)) {
+                items.add(PageItem.page(currentSig, i, pageLabel(pages.get(i), i),
+                    pages.get(i).getPageType()));
+            }
         }
         pageListView.setItems(items);
-        refreshPreviewSummary();
+
+        updateOverflow();
+        refreshPreviewSummary(pages, group, pps);
+    }
+
+    private void updateOverflow() {
+        if (overflowLabel == null) {
+            return;
+        }
+        PageSequence seq = state.getPageSequence();
+        if (seq == null) {
+            overflowLabel.setText("");
+            return;
+        }
+        ImpositionGroup group = techniqueCombo != null && techniqueCombo.getValue() != null
+            ? BindingGroupMapper.groupFor(techniqueCombo.getValue()) : ImpositionGroup.B;
+        if (group != ImpositionGroup.C) {
+            overflowLabel.setText("");
+            return;
+        }
+        int pps = sigSizeSpinner.getValue() != null ? sigSizeSpinner.getValue() * 4 : 16;
+        int total = seq.pageCount();
+        int remainder = total % pps;
+        if (remainder == 0) {
+            int sigs = total / pps;
+            overflowLabel.setText(sigs + " complete signature(s) — no padding needed.");
+        } else {
+            int blanksNeeded = pps - remainder;
+            overflowLabel.setText(
+                "⚠  Last signature needs " + blanksNeeded
+                + " more page(s) to be complete (" + remainder + "/" + pps + ").");
+        }
+    }
+
+    private void refreshPreviewSummary(List<QuirePage> pages, ImpositionGroup group, int pps) {
+        long blanks = pages.stream().filter(p -> p.getPageType() != PageType.CONTENT).count();
+        int sigs = group == ImpositionGroup.C
+            ? (int) Math.ceil((double) pages.size() / pps) : 1;
+        previewSummaryLabel.setText(
+            pages.size() + " pages total  ·  "
+            + blanks + " blank  ·  "
+            + (pages.size() - blanks) + " content  ·  "
+            + sigs + " signature(s)");
     }
 
     private static String pageLabel(QuirePage page, int idx) {
         String type = switch (page.getPageType()) {
             case CONTENT -> "Content";
-            case AESTHETIC -> "Aesthetic blank";
-            case COMPLETION_BLANK -> "Blank";
-            case FILLER_BLANK -> "Filler";
+            case AESTHETIC -> "Decorative blank";
+            case COMPLETION_BLANK -> "Completion blank";
+            case FILLER_BLANK -> "Filler blank";
         };
         String logical = page.getLogicalPageNumber()
-            .map(n -> "  (logical p." + n + ")")
+            .map(n -> "  (p." + n + ")")
             .orElse("");
-        return "  " + (idx + 1) + "  " + type + logical;
-    }
-
-    private void refreshPreviewSummary() {
-        PageSequence seq = state.getPageSequence();
-        if (seq == null) {
-            previewSummaryLabel.setText("");
-            return;
-        }
-        long blanks = seq.getPages().stream()
-            .filter(p -> p.getPageType() != PageType.CONTENT)
-            .count();
-        previewSummaryLabel.setText(seq.pageCount() + " pages total  ·  "
-            + blanks + " blank  ·  "
-            + (seq.pageCount() - blanks) + " content");
+        return "  " + (idx + 1) + ".  " + type + logical;
     }
 
     // ── Step 4 actions ────────────────────────────────────────────────────────
@@ -492,7 +707,6 @@ public final class MainController implements Initializable {
         if (seq == null) {
             return;
         }
-
         double thickness = parseThickness();
         CreepConfig creepConfig = thickness > 0
             ? CreepConfig.builder().paperThicknessMm(thickness).build()
@@ -500,6 +714,7 @@ public final class MainController implements Initializable {
 
         int sigSize = sigSizeSpinner.getValue() != null ? sigSizeSpinner.getValue() : 4;
 
+        // Blanks are already in the sequence from step 3 — use zero completion padding
         QuireProject project = QuireProject.builder()
             .name(state.getInputPdf() != null
                 ? state.getInputPdf().getFileName().toString() : "project")
@@ -508,8 +723,18 @@ public final class MainController implements Initializable {
             .readingDirection(state.getReadingDirection())
             .layout(ImpositionLayout.FOLIO)
             .pageSequence(seq)
-            .paddingConfig(PaddingConfig.builder().signatureSize(sigSize).build())
-            .numberingConfig(NumberingConfig.builder().build())
+            .paddingConfig(PaddingConfig.builder()
+                .signatureSize(sigSize)
+                .completionFront(0)
+                .completionRear(0)
+                .build())
+            .numberingConfig(NumberingConfig.builder()
+                .bodyStyle(state.getBodyFolioStyle())
+                .frontMatterStyle(state.getFrontMatterFolioStyle())
+                .bodyStartNumber(state.getBodyStartNumber())
+                .suppressFirstBodyFolio(state.isSuppressFirstFolio())
+                .folioPosition(state.getFolioPosition())
+                .build())
             .markConfig(MarkConfig.builder().build())
             .creepConfig(creepConfig)
             .build();
@@ -520,7 +745,8 @@ public final class MainController implements Initializable {
         signaturesTable.setItems(FXCollections.observableArrayList(
             sigs.stream().map(SignatureRow::from).toList()));
 
-        setStatus("Imposition ready: " + sigs.size() + " signature(s).");
+        int totalSheets = sigs.stream().mapToInt(s -> s.getSheets().size()).sum();
+        setStatus("Imposition: " + sigs.size() + " signature(s), " + totalSheets + " sheet(s).");
     }
 
     @FXML
@@ -547,19 +773,11 @@ public final class MainController implements Initializable {
         }
         collectMarksState();
         try {
-            MarkConfig marks = MarkConfig.builder()
-                .foldLines(state.isFoldLines())
-                .signatureProofMarkers(state.isStitchMarks())
-                .trimLines(state.isTrimLines())
-                .sewingHoles(state.isSewingHoles())
-                .build();
-
             PdfImpositionWriter.write(
                 state.getImpositionResult(),
                 state.getInputPdf(),
                 state.getOutputPdf(),
                 state.getPaperSize());
-
             exportResultLabel.setText("Exported: " + state.getOutputPdf().getFileName());
             exportButton.setDisable(true);
             setStatus("Export complete.");
@@ -605,6 +823,8 @@ public final class MainController implements Initializable {
             int next = currentStep + 1;
             if (next == 2) {
                 collectOptionsState();
+                collapsedSignatures.clear();
+                applyDefaultPadding();
                 rebuildPageList();
             }
             if (next == 3) {
@@ -635,7 +855,8 @@ public final class MainController implements Initializable {
                 yield true;
             }
             case 2 -> {
-                if (state.getPageSequence() == null || state.getPageSequence().pageCount() == 0) {
+                if (state.getPageSequence() == null
+                        || state.getPageSequence().pageCount() == 0) {
                     showError("Empty sequence", "There are no pages to impose.");
                     yield false;
                 }
@@ -666,6 +887,19 @@ public final class MainController implements Initializable {
         state.setStitchMarks(stitchMarksCheck.isSelected());
         state.setSewingHoles(sewingHolesCheck.isSelected());
         state.setTrimLines(trimLinesCheck.isSelected());
+        if (bodyFolioStyleCombo.getValue() != null) {
+            state.setBodyFolioStyle(bodyFolioStyleCombo.getValue());
+        }
+        if (frontMatterFolioStyleCombo.getValue() != null) {
+            state.setFrontMatterFolioStyle(frontMatterFolioStyleCombo.getValue());
+        }
+        if (startNumberSpinner.getValue() != null) {
+            state.setBodyStartNumber(startNumberSpinner.getValue());
+        }
+        if (folioPositionCombo.getValue() != null) {
+            state.setFolioPosition(folioPositionCombo.getValue());
+        }
+        state.setSuppressFirstFolio(suppressFirstFolioCheck.isSelected());
     }
 
     private void showStep(int step) {
@@ -745,36 +979,47 @@ public final class MainController implements Initializable {
     // ── Inner types ───────────────────────────────────────────────────────────
 
     /**
-     * Represents one row in the page list — either a content/blank page or a signature
-     * boundary header.
+     * Represents one row in the page list — either a content/blank page or a collapsable
+     * signature boundary header. {@code sigNum} is 1-based for all row types.
      */
-    public record PageItem(boolean isHeader, int seqIndex, String label, PageType pageType) {
+    public record PageItem(boolean isHeader, int sigNum, int seqIndex,
+                           String label, PageType pageType) {
 
         /** Creates a signature boundary header row. */
-        static PageItem header(String label) {
-            return new PageItem(true, -1, label, null);
+        static PageItem header(int sigNum, String label) {
+            return new PageItem(true, sigNum, -1, label, null);
         }
 
         /** Creates a page row. */
-        static PageItem page(int seqIndex, String label, PageType pageType) {
-            return new PageItem(false, seqIndex, label, pageType);
+        static PageItem page(int sigNum, int seqIndex, String label, PageType pageType) {
+            return new PageItem(false, sigNum, seqIndex, label, pageType);
         }
     }
 
-    /** Custom list cell that styles header rows differently from page rows. */
+    /** Cell that styles headers and blank pages distinctly, and toggles collapse on click. */
     private static final class PageListCell extends ListCell<PageItem> {
+
+        private final Consumer<Integer> onToggle;
+
+        PageListCell(Consumer<Integer> onToggle) {
+            this.onToggle = onToggle;
+        }
 
         @Override
         protected void updateItem(PageItem item, boolean empty) {
             super.updateItem(item, empty);
-            getStyleClass().removeAll("sig-header-cell", "blank-page-cell", "content-page-cell");
+            getStyleClass().removeAll("sig-header-cell", "blank-page-cell",
+                "content-page-cell", "overflow-sig-cell");
+            setOnMouseClicked(null);
             if (empty || item == null) {
                 setText(null);
                 setDisable(false);
             } else if (item.isHeader()) {
                 setText(item.label());
-                getStyleClass().add("sig-header-cell");
-                setDisable(true);
+                getStyleClass().add(item.label().contains("⚠")
+                    ? "overflow-sig-cell" : "sig-header-cell");
+                setDisable(false);
+                setOnMouseClicked(e -> onToggle.accept(item.sigNum()));
             } else {
                 setText(item.label());
                 boolean isBlank = item.pageType() != PageType.CONTENT;

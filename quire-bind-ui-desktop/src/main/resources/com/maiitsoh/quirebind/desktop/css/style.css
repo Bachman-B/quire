@@ -185,6 +185,19 @@
     -fx-font-size: 11px;
 }
 
+.overflow-sig-cell {
+    -fx-background-color: #fff3e0;
+    -fx-font-weight: bold;
+    -fx-text-fill: #c85000;
+    -fx-font-size: 11px;
+}
+
+.overflow-label {
+    -fx-text-fill: #c85000;
+    -fx-font-weight: bold;
+    -fx-font-size: 12px;
+}
+
 .blank-page-cell {
     -fx-text-fill: #888888;
     -fx-font-style: italic;

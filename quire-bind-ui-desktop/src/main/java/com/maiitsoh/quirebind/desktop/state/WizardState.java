@@ -20,6 +20,8 @@ package com.maiitsoh.quirebind.desktop.state;
 
 import com.maiitsoh.quirebind.batch.model.BatchConfig;
 import com.maiitsoh.quirebind.core.model.BindingTechnique;
+import com.maiitsoh.quirebind.core.model.FolioPosition;
+import com.maiitsoh.quirebind.core.model.FolioStyle;
 import com.maiitsoh.quirebind.core.model.PageSequence;
 import com.maiitsoh.quirebind.core.model.PaperSize;
 import com.maiitsoh.quirebind.core.model.ReadingDirection;
@@ -37,7 +39,14 @@ public final class WizardState {
         BATCH
     }
 
+    /** Where completion blank pages are inserted to fill the last signature. */
+    public enum PaddingPosition {
+        BEFORE,
+        AFTER
+    }
+
     private WizardMode mode = WizardMode.SINGLE_PDF;
+    private PaddingPosition paddingPosition = PaddingPosition.AFTER;
 
     // Single PDF mode
     private Path inputPdf;
@@ -61,6 +70,13 @@ public final class WizardState {
     private boolean sewingHoles = false;
     private boolean trimLines = false;
 
+    // Page numbering
+    private FolioStyle bodyFolioStyle = FolioStyle.ARABIC;
+    private FolioStyle frontMatterFolioStyle = FolioStyle.NONE;
+    private int bodyStartNumber = 1;
+    private boolean suppressFirstFolio = false;
+    private FolioPosition folioPosition = FolioPosition.OUTER_MARGIN;
+
     // Imposition result
     private List<Signature> impositionResult;
 
@@ -75,6 +91,16 @@ public final class WizardState {
     /** Sets the wizard mode. */
     public void setMode(WizardMode mode) {
         this.mode = mode;
+    }
+
+    /** Returns where completion blanks are inserted to fill the last signature. */
+    public PaddingPosition getPaddingPosition() {
+        return paddingPosition;
+    }
+
+    /** Sets where completion blanks are inserted. */
+    public void setPaddingPosition(PaddingPosition paddingPosition) {
+        this.paddingPosition = paddingPosition;
     }
 
     /** Returns the source PDF path, or {@code null} if none has been chosen. */
@@ -217,6 +243,56 @@ public final class WizardState {
         this.trimLines = trimLines;
     }
 
+    /** Returns the folio style for body (content) pages. */
+    public FolioStyle getBodyFolioStyle() {
+        return bodyFolioStyle;
+    }
+
+    /** Sets the folio style for body pages. */
+    public void setBodyFolioStyle(FolioStyle bodyFolioStyle) {
+        this.bodyFolioStyle = bodyFolioStyle;
+    }
+
+    /** Returns the folio style for front matter pages. */
+    public FolioStyle getFrontMatterFolioStyle() {
+        return frontMatterFolioStyle;
+    }
+
+    /** Sets the folio style for front matter pages. */
+    public void setFrontMatterFolioStyle(FolioStyle frontMatterFolioStyle) {
+        this.frontMatterFolioStyle = frontMatterFolioStyle;
+    }
+
+    /** Returns the start number assigned to the first body page. */
+    public int getBodyStartNumber() {
+        return bodyStartNumber;
+    }
+
+    /** Sets the start number for the first body page. */
+    public void setBodyStartNumber(int bodyStartNumber) {
+        this.bodyStartNumber = bodyStartNumber;
+    }
+
+    /** Returns whether the folio is suppressed on the first body page. */
+    public boolean isSuppressFirstFolio() {
+        return suppressFirstFolio;
+    }
+
+    /** Sets whether the folio is suppressed on the first body page. */
+    public void setSuppressFirstFolio(boolean suppressFirstFolio) {
+        this.suppressFirstFolio = suppressFirstFolio;
+    }
+
+    /** Returns the horizontal position of the printed folio. */
+    public FolioPosition getFolioPosition() {
+        return folioPosition;
+    }
+
+    /** Sets the horizontal position of the printed folio. */
+    public void setFolioPosition(FolioPosition folioPosition) {
+        this.folioPosition = folioPosition;
+    }
+
     /** Returns the computed imposition result, or {@code null} if imposition has not run yet. */
     public List<Signature> getImpositionResult() {
         return impositionResult;
@@ -255,6 +331,7 @@ public final class WizardState {
     /** Clears all state, resetting to defaults for a new project. */
     public void reset() {
         mode = WizardMode.SINGLE_PDF;
+        paddingPosition = PaddingPosition.AFTER;
         inputPdf = null;
         pageCount = 0;
         pageSequence = null;
@@ -269,6 +346,11 @@ public final class WizardState {
         stitchMarks = false;
         sewingHoles = false;
         trimLines = false;
+        bodyFolioStyle = FolioStyle.ARABIC;
+        frontMatterFolioStyle = FolioStyle.NONE;
+        bodyStartNumber = 1;
+        suppressFirstFolio = false;
+        folioPosition = FolioPosition.OUTER_MARGIN;
         impositionResult = null;
         outputPdf = null;
     }
