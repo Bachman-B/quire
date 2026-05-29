@@ -33,9 +33,9 @@ import com.maiitsoh.quirebind.core.model.PaddingConfig;
 import com.maiitsoh.quirebind.core.model.PageSequence;
 import com.maiitsoh.quirebind.core.model.QuirePage;
 import com.maiitsoh.quirebind.core.model.ReadingDirection;
+import com.maiitsoh.quirebind.core.model.SewingConfig;
 import com.maiitsoh.quirebind.core.model.Signature;
 import com.maiitsoh.quirebind.core.pdf.PdfImpositionWriter;
-import com.maiitsoh.quirebind.core.pdf.PdfPageLoader;
 import com.maiitsoh.quirebind.web.model.WebSession;
 
 import org.springframework.stereotype.Service;
@@ -58,7 +58,10 @@ public class WebImpositionService {
      * @throws IOException if the source PDF cannot be read
      */
     public void impose(WebSession session) throws IOException {
-        PageSequence seq = PdfPageLoader.load(session.getSourcePdf());
+        PageSequence seq = session.getPageSequence();
+        if (seq == null) {
+            throw new IllegalStateException("No page sequence in session");
+        }
         ImpositionGroup group = BindingGroupMapper.groupFor(session.getTechnique());
 
         PaddingConfig paddingConfig = PaddingConfig.builder()
@@ -88,10 +91,20 @@ public class WebImpositionService {
         }
         Path tempOut = Files.createTempFile("quire-web-export-", ".pdf");
         try {
+            SewingConfig sewingConfig = session.isSewingHoles()
+                ? SewingConfig.builder()
+                    .style(session.getSewingStyle())
+                    .holeCount(session.getSewingHoleCount())
+                    .endMarginMm(session.getSewingEndMarginMm())
+                    .bandCount(session.getSewingBandCount())
+                    .bandWidthMm(session.getSewingBandWidthMm())
+                    .build()
+                : null;
             MarkConfig markConfig = MarkConfig.builder()
                 .foldLines(session.isFoldLines())
                 .signatureProofMarkers(session.isStitchMarks())
                 .sewingHoles(session.isSewingHoles())
+                .sewingConfig(sewingConfig)
                 .trimLines(session.isTrimLines())
                 .build();
             NumberingConfig numberingConfig = buildNumberingConfig(session);
@@ -119,10 +132,8 @@ public class WebImpositionService {
         if (all == null) {
             return List.of();
         }
-        PageSequence seq;
-        try {
-            seq = PdfPageLoader.load(session.getSourcePdf());
-        } catch (IOException e) {
+        PageSequence seq = session.getPageSequence();
+        if (seq == null) {
             return List.of();
         }
         ImpositionGroup group = BindingGroupMapper.groupFor(session.getTechnique());

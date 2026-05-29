@@ -1423,6 +1423,9 @@ public final class MainController implements Initializable {
         fc.getExtensionFilters().add(new ExtensionFilter("PDF Files", "*.pdf"));
         File f = fc.showSaveDialog(wizardStack.getScene().getWindow());
         if (f != null) {
+            if (!f.getName().endsWith(".pdf")) {
+                f = new File(f.getParentFile(), f.getName() + ".pdf");
+            }
             state.setOutputPdf(f.toPath());
             outputPathField.setText(f.toString());
             exportButton.setDisable(false);
@@ -1490,6 +1493,9 @@ public final class MainController implements Initializable {
         File f = fc.showSaveDialog(wizardStack.getScene().getWindow());
         if (f == null) {
             return;
+        }
+        if (!f.getName().endsWith(".quire")) {
+            f = new File(f.getParentFile(), f.getName() + ".quire");
         }
         collectOptionsState();
         collectMarksState();

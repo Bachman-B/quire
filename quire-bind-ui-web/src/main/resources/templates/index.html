@@ -20,23 +20,7 @@
 
 <div class="wizard-shell">
 
-    <!-- Step indicator -->
-    <div id="step-indicator" class="step-indicator">
-        <div th:each="n : ${#numbers.sequence(1,4)}"
-             th:classappend="${n == step} ? 'active' : (${n lt step} ? 'done' : '')"
-             class="step-dot">
-            <span class="step-num" th:text="${n}">1</span>
-            <span class="step-label" th:switch="${n}">
-                <span th:case="1">Upload</span>
-                <span th:case="2">Binding</span>
-                <span th:case="3">Pages</span>
-                <span th:case="4">Export</span>
-            </span>
-        </div>
-        <div class="step-line"></div>
-    </div>
-
-    <!-- Wizard content — HTMX swaps this div's innerHTML -->
+    <!-- Wizard content — HTMX swaps this div's innerHTML; step indicator lives inside each fragment -->
     <div id="wizard-content">
         <th:block th:if="${step == 1}">
             <div th:replace="~{fragments/upload :: step}"></div>

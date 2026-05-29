@@ -4,7 +4,7 @@
 
 <th:block th:fragment="step">
     <!-- OOB step indicator update -->
-    <div id="step-indicator" class="step-indicator" hx-swap-oob="true">
+    <div id="step-indicator" class="step-indicator">
         <div th:each="n : ${#numbers.sequence(1,4)}"
              th:classappend="${n == 1} ? 'active' : ''"
              class="step-dot">

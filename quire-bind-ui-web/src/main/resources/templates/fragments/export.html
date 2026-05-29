@@ -4,7 +4,7 @@
 
 <th:block th:fragment="step">
     <!-- OOB step indicator update -->
-    <div id="step-indicator" class="step-indicator" hx-swap-oob="true">
+    <div id="step-indicator" class="step-indicator">
         <div th:each="n : ${#numbers.sequence(1,4)}"
              th:classappend="${n == 4} ? 'active' : 'done'"
              class="step-dot">
@@ -34,19 +34,65 @@
                 <h3 class="section-label">Output marks</h3>
                 <label class="checkbox-label">
                     <input type="checkbox" form="export-form" name="foldLines"
-                           th:checked="${session.foldLines}"/> Fold lines
+                           th:checked="${ws.foldLines}"/> Fold lines
                 </label>
                 <label class="checkbox-label">
                     <input type="checkbox" form="export-form" name="stitchMarks"
-                           th:checked="${session.stitchMarks}"/> Stitch marks
+                           th:checked="${ws.stitchMarks}"/> Stitch marks
                 </label>
-                <label class="checkbox-label">
-                    <input type="checkbox" form="export-form" name="sewingHoles"
-                           th:checked="${session.sewingHoles}"/> Sewing holes
-                </label>
+
+                <!-- Sewing holes with expandable config -->
+                <div class="sewing-group">
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="sewingHolesCheck" form="export-form"
+                               name="sewingHoles" th:checked="${ws.sewingHoles}"
+                               onchange="setSewingParamsVisible(this.checked)"/>
+                        Sewing holes
+                    </label>
+                    <div id="sewingParams" class="sewing-params"
+                         th:style="${ws.sewingHoles} ? '' : 'display:none'">
+                        <div class="sewing-mode-row">
+                            <label class="radio-label">
+                                <input type="radio" form="export-form" name="sewingStyle"
+                                       value="SIMPLE"
+                                       th:checked="${ws.sewingStyle.name() == 'SIMPLE'}"
+                                       onchange="setSewingMode('SIMPLE')"/> Simple
+                            </label>
+                            <label class="radio-label">
+                                <input type="radio" form="export-form" name="sewingStyle"
+                                       value="BANDED"
+                                       th:checked="${ws.sewingStyle.name() == 'BANDED'}"
+                                       onchange="setSewingMode('BANDED')"/> Banded
+                            </label>
+                        </div>
+                        <div id="sewingSimpleParams" class="sewing-field-group"
+                             th:style="${ws.sewingStyle.name() == 'BANDED'} ? 'display:none' : ''">
+                            <label class="field-label-sm">Holes</label>
+                            <input type="number" form="export-form" name="sewingHoleCount"
+                                   min="2" th:value="${ws.sewingHoleCount}" class="input-narrow"/>
+                        </div>
+                        <div id="sewingBandedParams" class="sewing-field-group"
+                             th:style="${ws.sewingStyle.name() == 'SIMPLE'} ? 'display:none' : ''">
+                            <label class="field-label-sm">Bands</label>
+                            <input type="number" form="export-form" name="sewingBandCount"
+                                   min="1" th:value="${ws.sewingBandCount}" class="input-narrow"/>
+                            <label class="field-label-sm">Band width (mm)</label>
+                            <input type="number" form="export-form" name="sewingBandWidthMm"
+                                   min="1" step="0.5" th:value="${ws.sewingBandWidthMm}"
+                                   class="input-narrow"/>
+                        </div>
+                        <div class="sewing-field-group">
+                            <label class="field-label-sm">End margin (mm)</label>
+                            <input type="number" form="export-form" name="sewingEndMarginMm"
+                                   min="1" step="0.5" th:value="${ws.sewingEndMarginMm}"
+                                   class="input-narrow"/>
+                        </div>
+                    </div>
+                </div>
+
                 <label class="checkbox-label">
                     <input type="checkbox" form="export-form" name="trimLines"
-                           th:checked="${session.trimLines}"/> Trim lines
+                           th:checked="${ws.trimLines}"/> Trim lines
                 </label>
             </section>
 
@@ -58,6 +104,7 @@
                         <tr>
                             <th></th>
                             <th>Style</th>
+                            <th>Start #</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -68,9 +115,15 @@
                                     <option th:each="s : ${folioStyles}"
                                             th:value="${s.name()}"
                                             th:text="${s.name()}"
-                                            th:selected="${session.frontMatterFolioStyle == s}">
+                                            th:selected="${ws.frontMatterFolioStyle == s}">
                                     </option>
                                 </select>
+                            </td>
+                            <td>
+                                <input type="number" form="export-form"
+                                       name="frontMatterStartNumber" min="1"
+                                       th:value="${ws.frontMatterStartNumber}"
+                                       class="input-narrow"/>
                             </td>
                         </tr>
                         <tr>
@@ -80,9 +133,15 @@
                                     <option th:each="s : ${folioStyles}"
                                             th:value="${s.name()}"
                                             th:text="${s.name()}"
-                                            th:selected="${session.bodyFolioStyle == s}">
+                                            th:selected="${ws.bodyFolioStyle == s}">
                                     </option>
                                 </select>
+                            </td>
+                            <td>
+                                <input type="number" form="export-form"
+                                       name="bodyStartNumber" min="1"
+                                       th:value="${ws.bodyStartNumber}"
+                                       class="input-narrow"/>
                             </td>
                         </tr>
                         <tr>
@@ -92,19 +151,25 @@
                                     <option th:each="s : ${folioStyles}"
                                             th:value="${s.name()}"
                                             th:text="${s.name()}"
-                                            th:selected="${session.rearMatterFolioStyle == s}">
+                                            th:selected="${ws.rearMatterFolioStyle == s}">
                                     </option>
                                 </select>
+                            </td>
+                            <td>
+                                <input type="number" form="export-form"
+                                       name="rearMatterStartNumber" min="1"
+                                       th:value="${ws.rearMatterStartNumber}"
+                                       class="input-narrow"/>
                             </td>
                         </tr>
                         <tr>
                             <td class="zone-label">Position</td>
-                            <td>
+                            <td colspan="2">
                                 <select form="export-form" name="folioPosition" class="select-sm">
                                     <option th:each="p : ${folioPositions}"
                                             th:value="${p.name()}"
                                             th:text="${p.name()}"
-                                            th:selected="${session.folioPosition == p}">
+                                            th:selected="${ws.folioPosition == p}">
                                     </option>
                                 </select>
                             </td>
@@ -113,7 +178,7 @@
                 </table>
                 <label class="checkbox-label" style="margin-top:8px">
                     <input type="checkbox" form="export-form" name="suppressFirstFolio"
-                           th:checked="${session.suppressFirstFolio}"/>
+                           th:checked="${ws.suppressFirstFolio}"/>
                     Suppress folio on first page
                 </label>
             </section>
@@ -158,6 +223,16 @@
         </form>
 
     </div>
+
+    <script>
+    function setSewingParamsVisible(visible) {
+        document.getElementById('sewingParams').style.display = visible ? '' : 'none';
+    }
+    function setSewingMode(mode) {
+        document.getElementById('sewingSimpleParams').style.display = mode === 'SIMPLE' ? '' : 'none';
+        document.getElementById('sewingBandedParams').style.display = mode === 'BANDED'  ? '' : 'none';
+    }
+    </script>
 </th:block>
 
 </body>

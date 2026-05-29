@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<body>
+
+<!--
+  "list"        — full wrapper, used by th:replace on initial render.
+  "row-content" — just the <tr> elements, shared between list and rows.
+  "rows"        — returned by manipulation endpoints; swaps tbody innerHTML.
+-->
+
+<th:block th:fragment="list">
+<div id="page-list-wrapper">
+    <div class="page-list-scroll">
+        <table class="page-list-table">
+            <thead>
+                <tr>
+                    <th class="col-num">#</th>
+                    <th class="col-type">Type</th>
+                    <th class="col-actions">Actions</th>
+                </tr>
+            </thead>
+            <tbody id="page-list-tbody">
+                <th:block th:replace="~{fragments/page-list :: row-content}"></th:block>
+            </tbody>
+        </table>
+    </div>
+</div>
+</th:block>
+
+<th:block th:fragment="row-content">
+    <tr th:if="${pageItems.isEmpty()}">
+        <td colspan="3" class="page-list-empty">No pages loaded.</td>
+    </tr>
+    <tr th:each="row : ${pageItems}"
+        th:classappend="${row.header()} ? 'page-list-group-row' : ''">
+
+        <th:block th:if="${row.header()}">
+            <td colspan="3"
+                th:class="'page-list-group ' + ${row.cssClass()}"
+                th:text="${row.label()}"></td>
+        </th:block>
+
+        <th:block th:unless="${row.header()}">
+            <td class="col-num" th:text="${row.position() + 1}">1</td>
+            <td class="col-type">
+                <span th:class="'page-type page-type--' + ${row.cssClass()}"
+                      th:text="${row.label()}"></span>
+            </td>
+            <td class="col-actions">
+                <div class="page-actions">
+                    <button type="button"
+                            th:disabled="${row.position() == 0}"
+                            th:attr="hx-post='/wizard/pages/move-up?position=' + ${row.position()}"
+                            hx-target="#page-list-tbody"
+                            hx-swap="innerHTML"
+                            class="btn-icon" title="Move up">↑</button>
+                    <button type="button"
+                            th:disabled="${row.position() + 1 == pageCount}"
+                            th:attr="hx-post='/wizard/pages/move-down?position=' + ${row.position()}"
+                            hx-target="#page-list-tbody"
+                            hx-swap="innerHTML"
+                            class="btn-icon" title="Move down">↓</button>
+                    <button type="button"
+                            th:attr="hx-post='/wizard/pages/insert-blank?position=' + ${row.position()}"
+                            hx-target="#page-list-tbody"
+                            hx-swap="innerHTML"
+                            class="btn-icon btn-icon--add" title="Insert blank before">+↑</button>
+                    <button type="button"
+                            th:attr="hx-post='/wizard/pages/insert-blank?position=' + ${row.position() + 1}"
+                            hx-target="#page-list-tbody"
+                            hx-swap="innerHTML"
+                            class="btn-icon btn-icon--add" title="Insert blank after">+↓</button>
+                    <button type="button"
+                            th:attr="hx-post='/wizard/pages/remove?position=' + ${row.position()}"
+                            hx-target="#page-list-tbody"
+                            hx-swap="innerHTML"
+                            class="btn-icon btn-icon--remove" title="Remove page">✕</button>
+                </div>
+            </td>
+        </th:block>
+
+    </tr>
+</th:block>
+
+<!-- "rows" — only <tr> content, no extra elements that would confuse the tbody HTML parser -->
+<th:block th:fragment="rows">
+    <th:block th:replace="~{fragments/page-list :: row-content}"></th:block>
+</th:block>
+
+</body>
+</html>

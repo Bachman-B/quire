@@ -4,7 +4,7 @@
 
 <th:block th:fragment="step">
     <!-- OOB step indicator update -->
-    <div id="step-indicator" class="step-indicator" hx-swap-oob="true">
+    <div id="step-indicator" class="step-indicator">
         <div th:each="n : ${#numbers.sequence(1,4)}"
              th:classappend="${n == 2} ? 'active' : (${n lt 2} ? 'done' : '')"
              class="step-dot">
@@ -34,7 +34,7 @@
                         <option th:each="t : ${techniques}"
                                 th:value="${t.name()}"
                                 th:text="${t.name().replace('_',' ').toLowerCase()}"
-                                th:selected="${session.technique == t}">
+                                th:selected="${ws.technique == t}">
                         </option>
                     </select>
                 </div>
@@ -45,7 +45,7 @@
                         <option th:each="p : ${paperSizes}"
                                 th:value="${p.name()}"
                                 th:text="${p.name()}"
-                                th:selected="${session.paperSize == p}">
+                                th:selected="${ws.paperSize == p}">
                         </option>
                     </select>
                 </div>
@@ -55,12 +55,12 @@
                     <div class="radio-row">
                         <label class="radio-label">
                             <input type="radio" name="readingDirection" value="LTR"
-                                   th:checked="${session.readingDirection.name() == 'LTR'}"/>
+                                   th:checked="${ws.readingDirection.name() == 'LTR'}"/>
                             Left to right
                         </label>
                         <label class="radio-label">
                             <input type="radio" name="readingDirection" value="RTL"
-                                   th:checked="${session.readingDirection.name() == 'RTL'}"/>
+                                   th:checked="${ws.readingDirection.name() == 'RTL'}"/>
                             Right to left
                         </label>
                     </div>
@@ -69,7 +69,7 @@
                 <div class="field-group">
                     <label for="sigSize" class="field-label">Sheets per signature</label>
                     <input id="sigSize" type="number" name="signatureSize" min="1" max="16"
-                           th:value="${session.signatureSize}" class="input-narrow"/>
+                           th:value="${ws.signatureSize}" class="input-narrow"/>
                     <p class="field-hint">Ignored for single-signature techniques (Group B).</p>
                 </div>
             </div>

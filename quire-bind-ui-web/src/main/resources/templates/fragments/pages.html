@@ -4,7 +4,7 @@
 
 <th:block th:fragment="step">
     <!-- OOB step indicator update -->
-    <div id="step-indicator" class="step-indicator" hx-swap-oob="true">
+    <div id="step-indicator" class="step-indicator">
         <div th:each="n : ${#numbers.sequence(1,4)}"
              th:classappend="${n == 3} ? 'active' : (${n lt 3} ? 'done' : '')"
              class="step-dot">
@@ -19,52 +19,78 @@
         <div class="step-line"></div>
     </div>
 
-    <div class="step-card">
-        <h2 class="step-title">Page Zones</h2>
-        <p class="step-description">
-            Specify how many pages at the start and end of the document should be treated as
-            front and rear matter. The remaining pages form the body.
-        </p>
+    <div class="step-card step-card--wide">
+        <h2 class="step-title">Pages</h2>
 
-        <form hx-post="/wizard/pages"
-              hx-target="#wizard-content"
-              hx-swap="innerHTML"
-              hx-indicator=".impose-indicator">
+        <div class="pages-layout">
 
-            <div class="form-grid">
-                <div class="field-group">
-                    <label for="frontPages" class="field-label">Front matter pages</label>
-                    <input id="frontPages" type="number" name="frontMatterPages"
-                           min="0" th:value="${session.frontMatterPageCount}" class="input-narrow"/>
-                    <p class="field-hint">
-                        Pages at the start treated as front matter (title page, ToC, etc.).
-                        Enter 0 if none.
-                    </p>
+            <!-- Left: page sequence editor -->
+            <div class="pages-col-list">
+                <div class="pages-list-header">
+                    <h3 class="section-heading">Page Sequence
+                        <span id="page-count-badge" class="page-count-badge"
+                              th:text="${pageCount} + ' pages'"></span>
+                    </h3>
+                    <div class="page-list-toolbar">
+                        <button type="button"
+                                hx-post="/wizard/pages/insert-blank?position=0"
+                                hx-target="#page-list-tbody"
+                                hx-swap="innerHTML"
+                                class="btn btn-sm">+ Blank at start</button>
+                        <button type="button"
+                                th:attr="hx-post='/wizard/pages/insert-blank?position=' + ${pageCount}"
+                                hx-target="#page-list-tbody"
+                                hx-swap="innerHTML"
+                                class="btn btn-sm">+ Blank at end</button>
+                    </div>
                 </div>
+                <div th:replace="~{fragments/page-list :: list}"></div>
+            </div>
 
-                <div class="field-group">
-                    <label for="rearPages" class="field-label">Rear matter pages</label>
-                    <input id="rearPages" type="number" name="rearMatterPages"
-                           min="0" th:value="${session.rearMatterPageCount}" class="input-narrow"/>
-                    <p class="field-hint">
-                        Pages at the end treated as rear matter (index, colophon, etc.).
-                        Enter 0 if none.
+            <!-- Right: zone config + navigation -->
+            <div class="pages-col-zones">
+                <form hx-post="/wizard/pages"
+                      hx-target="#wizard-content"
+                      hx-swap="innerHTML"
+                      hx-indicator=".impose-indicator">
+
+                    <h3 class="section-heading">Page Zones</h3>
+                    <p class="step-description">
+                        Designate how many pages at the start and end are front/rear matter.
+                        The rest become the body.
                     </p>
-                </div>
+
+                    <div class="field-group">
+                        <label for="frontPages" class="field-label">Front matter pages</label>
+                        <input id="frontPages" type="number" name="frontMatterPages"
+                               min="0" step="4" th:value="${ws.frontMatterPageCount}"
+                               class="input-narrow"/>
+                        <p class="field-hint">Title page, ToC, etc. Must be a multiple of 4.</p>
+                    </div>
+
+                    <div class="field-group">
+                        <label for="rearPages" class="field-label">Rear matter pages</label>
+                        <input id="rearPages" type="number" name="rearMatterPages"
+                               min="0" step="4" th:value="${ws.rearMatterPageCount}"
+                               class="input-narrow"/>
+                        <p class="field-hint">Index, colophon, etc. Must be a multiple of 4.</p>
+                    </div>
+
+                    <div class="impose-indicator htmx-indicator">
+                        <span class="spinner"></span> Computing imposition…
+                    </div>
+
+                    <div class="step-actions">
+                        <button type="button" class="btn btn-secondary"
+                                hx-post="/wizard/back/binding"
+                                hx-target="#wizard-content"
+                                hx-swap="innerHTML">← Back</button>
+                        <button type="submit" class="btn btn-primary">Next →</button>
+                    </div>
+                </form>
             </div>
 
-            <div class="impose-indicator htmx-indicator">
-                <span class="spinner"></span> Computing imposition…
-            </div>
-
-            <div class="step-actions">
-                <button type="button" class="btn btn-secondary"
-                        hx-post="/wizard/back/binding"
-                        hx-target="#wizard-content"
-                        hx-swap="innerHTML">← Back</button>
-                <button type="submit" class="btn btn-primary">Next →</button>
-            </div>
-        </form>
+        </div>
     </div>
 </th:block>
 

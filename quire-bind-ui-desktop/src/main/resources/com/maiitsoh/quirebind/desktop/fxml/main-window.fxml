@@ -290,132 +290,124 @@
                            styleClass="step-description" wrapText="true"/>
                     <Separator/>
 
-                    <!-- Two-column: marks + table -->
+                    <!-- Three-column: output marks | page numbering + export | table -->
                     <HBox spacing="20" VBox.vgrow="ALWAYS">
 
-                        <!-- Marks, numbering + export controls -->
-                        <ScrollPane fitToWidth="true" VBox.vgrow="ALWAYS"
-                                    hbarPolicy="NEVER" vbarPolicy="AS_NEEDED"
-                                    styleClass="export-scroll">
-                            <VBox spacing="10" minWidth="220">
-                                <padding><Insets top="2" right="4" bottom="2" left="0"/></padding>
-                                <Label text="Output Marks" styleClass="section-label"/>
-                                <CheckBox fx:id="foldLinesCheck"   text="Fold lines"/>
-                                <CheckBox fx:id="stitchMarksCheck" text="Stitch marks"/>
-                                <VBox spacing="3">
-                                    <CheckBox fx:id="sewingHolesCheck" text="Sewing holes"/>
-                                    <VBox fx:id="sewingHolesParams" spacing="4" disable="true">
-                                        <padding><Insets left="18"/></padding>
-                                        <HBox spacing="0" styleClass="mode-toggle-bar">
-                                            <ToggleButton fx:id="sewingSimpleToggle" text="Simple"
-                                                          styleClass="mode-toggle-left"/>
-                                            <ToggleButton fx:id="sewingBandedToggle" text="Banded"
-                                                          styleClass="mode-toggle-right"/>
-                                        </HBox>
-                                        <HBox fx:id="sewingSimpleParams" spacing="6"
-                                              alignment="CENTER_LEFT">
-                                            <Label text="Holes:" styleClass="field-label"/>
-                                            <Spinner fx:id="sewingHoleCountSpinner"
-                                                     maxWidth="58" editable="true"/>
-                                        </HBox>
-                                        <HBox fx:id="sewingBandedParams" spacing="6"
-                                              alignment="CENTER_LEFT"
-                                              visible="false" managed="false">
-                                            <Label text="Bands:" styleClass="field-label"/>
-                                            <Spinner fx:id="sewingBandCountSpinner"
-                                                     maxWidth="58" editable="true"/>
-                                            <Label text="Width:" styleClass="field-label"/>
-                                            <TextField fx:id="sewingBandWidthField"
-                                                       maxWidth="46" promptText="10"/>
-                                            <Label text="mm"/>
-                                        </HBox>
-                                        <HBox spacing="6" alignment="CENTER_LEFT">
-                                            <Label text="End margin:" styleClass="field-label"/>
-                                            <TextField fx:id="sewingEndMarginField"
-                                                       maxWidth="46" promptText="15"/>
-                                            <Label text="mm"/>
-                                        </HBox>
-                                    </VBox>
+                        <!-- Column 1: Output Marks -->
+                        <VBox spacing="8" minWidth="170">
+                            <Label text="Output Marks" styleClass="section-label"/>
+                            <CheckBox fx:id="foldLinesCheck"   text="Fold lines"/>
+                            <CheckBox fx:id="stitchMarksCheck" text="Stitch marks"/>
+                            <VBox spacing="3">
+                                <CheckBox fx:id="sewingHolesCheck" text="Sewing holes"/>
+                                <VBox fx:id="sewingHolesParams" spacing="4" disable="true">
+                                    <padding><Insets left="18"/></padding>
+                                    <HBox spacing="0" styleClass="mode-toggle-bar">
+                                        <ToggleButton fx:id="sewingSimpleToggle" text="Simple"
+                                                      styleClass="mode-toggle-left"/>
+                                        <ToggleButton fx:id="sewingBandedToggle" text="Banded"
+                                                      styleClass="mode-toggle-right"/>
+                                    </HBox>
+                                    <HBox fx:id="sewingSimpleParams" spacing="6"
+                                          alignment="CENTER_LEFT">
+                                        <Label text="Holes:" styleClass="field-label"/>
+                                        <Spinner fx:id="sewingHoleCountSpinner"
+                                                 maxWidth="58" editable="true"/>
+                                    </HBox>
+                                    <HBox fx:id="sewingBandedParams" spacing="6"
+                                          alignment="CENTER_LEFT"
+                                          visible="false" managed="false">
+                                        <Label text="Bands:" styleClass="field-label"/>
+                                        <Spinner fx:id="sewingBandCountSpinner"
+                                                 maxWidth="58" editable="true"/>
+                                        <Label text="Width:" styleClass="field-label"/>
+                                        <TextField fx:id="sewingBandWidthField"
+                                                   maxWidth="46" promptText="10"/>
+                                        <Label text="mm"/>
+                                    </HBox>
+                                    <HBox spacing="6" alignment="CENTER_LEFT">
+                                        <Label text="End margin:" styleClass="field-label"/>
+                                        <TextField fx:id="sewingEndMarginField"
+                                                   maxWidth="46" promptText="15"/>
+                                        <Label text="mm"/>
+                                    </HBox>
                                 </VBox>
-                                <CheckBox fx:id="trimLinesCheck"   text="Trim lines"/>
-                                <Separator/>
-                                <Label text="Page Numbering" styleClass="section-label"/>
-                                <GridPane hgap="6" vgap="5">
-                                    <columnConstraints>
-                                        <ColumnConstraints minWidth="90" maxWidth="110"/>
-                                        <ColumnConstraints hgrow="ALWAYS"/>
-                                        <ColumnConstraints minWidth="64" maxWidth="72"/>
-                                    </columnConstraints>
-                                    <!-- Header row -->
-                                    <Label text=""
-                                           GridPane.rowIndex="0" GridPane.columnIndex="0"/>
-                                    <Label text="Style"
-                                           GridPane.rowIndex="0" GridPane.columnIndex="1"
-                                           styleClass="field-label"/>
-                                    <Label text="Start №"
-                                           GridPane.rowIndex="0" GridPane.columnIndex="2"
-                                           styleClass="field-label"/>
-                                    <!-- Front matter -->
-                                    <Label text="Front matter:"
-                                           GridPane.rowIndex="1" GridPane.columnIndex="0"
-                                           styleClass="field-label"/>
-                                    <ComboBox fx:id="frontMatterFolioStyleCombo"
-                                              GridPane.rowIndex="1" GridPane.columnIndex="1"
-                                              maxWidth="Infinity"/>
-                                    <Spinner fx:id="frontStartNumberSpinner"
-                                             GridPane.rowIndex="1" GridPane.columnIndex="2"
-                                             maxWidth="64"/>
-                                    <!-- Body -->
-                                    <Label text="Body:"
-                                           GridPane.rowIndex="2" GridPane.columnIndex="0"
-                                           styleClass="field-label"/>
-                                    <ComboBox fx:id="bodyFolioStyleCombo"
-                                              GridPane.rowIndex="2" GridPane.columnIndex="1"
-                                              maxWidth="Infinity"/>
-                                    <Spinner fx:id="startNumberSpinner"
-                                             GridPane.rowIndex="2" GridPane.columnIndex="2"
-                                             maxWidth="64"/>
-                                    <!-- Rear matter -->
-                                    <Label text="Rear matter:"
-                                           GridPane.rowIndex="3" GridPane.columnIndex="0"
-                                           styleClass="field-label"/>
-                                    <ComboBox fx:id="rearMatterFolioStyleCombo"
-                                              GridPane.rowIndex="3" GridPane.columnIndex="1"
-                                              maxWidth="Infinity"/>
-                                    <Spinner fx:id="rearStartNumberSpinner"
-                                             GridPane.rowIndex="3" GridPane.columnIndex="2"
-                                             maxWidth="64"/>
-                                    <!-- Position -->
-                                    <Label text="Position:"
-                                           GridPane.rowIndex="4" GridPane.columnIndex="0"
-                                           styleClass="field-label"/>
-                                    <ComboBox fx:id="folioPositionCombo"
-                                              GridPane.rowIndex="4" GridPane.columnIndex="1"
-                                              GridPane.columnSpan="2" maxWidth="Infinity"/>
-                                </GridPane>
-                                <CheckBox fx:id="suppressFirstFolioCheck"
-                                          text="Suppress folio on first page"/>
-                                <Separator/>
-                                <Label text="Output File" styleClass="section-label"/>
-                                <HBox spacing="8" alignment="CENTER_LEFT">
-                                    <TextField fx:id="outputPathField"
-                                               promptText="No output chosen"
-                                               editable="false" HBox.hgrow="ALWAYS"/>
-                                    <Button text="Browse…" onAction="#handleBrowseOutput"
-                                            styleClass="action-button"/>
-                                </HBox>
-                                <Button fx:id="exportButton" text="Export PDF"
-                                        onAction="#handleExport"
-                                        styleClass="primary-button" maxWidth="Infinity"/>
-                                <Button text="Save as .quire template…"
-                                        onAction="#handleSaveTemplate"
-                                        styleClass="action-button" maxWidth="Infinity"/>
-                                <Label fx:id="exportResultLabel" styleClass="success-label"
-                                       wrapText="true"/>
                             </VBox>
-                        </ScrollPane>
+                            <CheckBox fx:id="trimLinesCheck" text="Trim lines"/>
+                        </VBox>
 
-                        <!-- Imposition summary table -->
+                        <!-- Vertical divider -->
+                        <Separator orientation="VERTICAL"/>
+
+                        <!-- Column 2: Page Numbering + Output File + Export -->
+                        <VBox spacing="8" minWidth="250">
+                            <Label text="Page Numbering" styleClass="section-label"/>
+                            <GridPane hgap="6" vgap="5">
+                                <columnConstraints>
+                                    <ColumnConstraints minWidth="86" maxWidth="100"/>
+                                    <ColumnConstraints hgrow="ALWAYS"/>
+                                    <ColumnConstraints minWidth="64" maxWidth="72"/>
+                                </columnConstraints>
+                                <Label text="" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+                                <Label text="Style" GridPane.rowIndex="0" GridPane.columnIndex="1"
+                                       styleClass="field-label"/>
+                                <Label text="Start №" GridPane.rowIndex="0" GridPane.columnIndex="2"
+                                       styleClass="field-label"/>
+                                <Label text="Front mat.:" GridPane.rowIndex="1" GridPane.columnIndex="0"
+                                       styleClass="field-label"/>
+                                <ComboBox fx:id="frontMatterFolioStyleCombo"
+                                          GridPane.rowIndex="1" GridPane.columnIndex="1"
+                                          maxWidth="Infinity"/>
+                                <Spinner fx:id="frontStartNumberSpinner"
+                                         GridPane.rowIndex="1" GridPane.columnIndex="2"
+                                         maxWidth="64"/>
+                                <Label text="Body:" GridPane.rowIndex="2" GridPane.columnIndex="0"
+                                       styleClass="field-label"/>
+                                <ComboBox fx:id="bodyFolioStyleCombo"
+                                          GridPane.rowIndex="2" GridPane.columnIndex="1"
+                                          maxWidth="Infinity"/>
+                                <Spinner fx:id="startNumberSpinner"
+                                         GridPane.rowIndex="2" GridPane.columnIndex="2"
+                                         maxWidth="64"/>
+                                <Label text="Rear mat.:" GridPane.rowIndex="3" GridPane.columnIndex="0"
+                                       styleClass="field-label"/>
+                                <ComboBox fx:id="rearMatterFolioStyleCombo"
+                                          GridPane.rowIndex="3" GridPane.columnIndex="1"
+                                          maxWidth="Infinity"/>
+                                <Spinner fx:id="rearStartNumberSpinner"
+                                         GridPane.rowIndex="3" GridPane.columnIndex="2"
+                                         maxWidth="64"/>
+                                <Label text="Position:" GridPane.rowIndex="4" GridPane.columnIndex="0"
+                                       styleClass="field-label"/>
+                                <ComboBox fx:id="folioPositionCombo"
+                                          GridPane.rowIndex="4" GridPane.columnIndex="1"
+                                          GridPane.columnSpan="2" maxWidth="Infinity"/>
+                            </GridPane>
+                            <CheckBox fx:id="suppressFirstFolioCheck"
+                                      text="Suppress folio on first page"/>
+                            <Separator/>
+                            <Label text="Output File" styleClass="section-label"/>
+                            <HBox spacing="8" alignment="CENTER_LEFT">
+                                <TextField fx:id="outputPathField"
+                                           promptText="No output chosen"
+                                           editable="false" HBox.hgrow="ALWAYS"/>
+                                <Button text="Browse…" onAction="#handleBrowseOutput"
+                                        styleClass="action-button"/>
+                            </HBox>
+                            <Button fx:id="exportButton" text="Export PDF"
+                                    onAction="#handleExport"
+                                    styleClass="primary-button" maxWidth="Infinity"/>
+                            <Button text="Save as .quire template…"
+                                    onAction="#handleSaveTemplate"
+                                    styleClass="action-button" maxWidth="Infinity"/>
+                            <Label fx:id="exportResultLabel" styleClass="success-label"
+                                   wrapText="true"/>
+                        </VBox>
+
+                        <!-- Vertical divider -->
+                        <Separator orientation="VERTICAL"/>
+
+                        <!-- Column 3: Imposition summary table -->
                         <VBox spacing="6" HBox.hgrow="ALWAYS">
                             <Label text="Imposition Summary" styleClass="section-label"/>
                             <TableView fx:id="signaturesTable" VBox.vgrow="ALWAYS">

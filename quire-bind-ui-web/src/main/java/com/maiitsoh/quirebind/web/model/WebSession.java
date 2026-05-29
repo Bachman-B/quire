@@ -21,8 +21,10 @@ package com.maiitsoh.quirebind.web.model;
 import com.maiitsoh.quirebind.core.model.BindingTechnique;
 import com.maiitsoh.quirebind.core.model.FolioPosition;
 import com.maiitsoh.quirebind.core.model.FolioStyle;
+import com.maiitsoh.quirebind.core.model.PageSequence;
 import com.maiitsoh.quirebind.core.model.PaperSize;
 import com.maiitsoh.quirebind.core.model.ReadingDirection;
+import com.maiitsoh.quirebind.core.model.SewingConfig;
 import com.maiitsoh.quirebind.core.model.Signature;
 
 import jakarta.annotation.PreDestroy;
@@ -63,8 +65,14 @@ public class WebSession {
     private boolean foldLines = false;
     private boolean stitchMarks = false;
     private boolean sewingHoles = false;
+    private SewingConfig.SewingStyle sewingStyle = SewingConfig.SewingStyle.SIMPLE;
+    private int sewingHoleCount = 5;
+    private double sewingEndMarginMm = 15.0;
+    private int sewingBandCount = 3;
+    private double sewingBandWidthMm = 10.0;
     private boolean trimLines = false;
 
+    private PageSequence pageSequence;
     private List<Signature> impositionResult;
 
     /** Deletes the temp PDF upload when the session expires. */
@@ -281,6 +289,56 @@ public class WebSession {
         this.sewingHoles = sewingHoles;
     }
 
+    /** Returns the sewing hole style (SIMPLE or BANDED). */
+    public SewingConfig.SewingStyle getSewingStyle() {
+        return sewingStyle;
+    }
+
+    /** Sets the sewing hole style. */
+    public void setSewingStyle(SewingConfig.SewingStyle sewingStyle) {
+        this.sewingStyle = sewingStyle;
+    }
+
+    /** Returns the sewing hole count (SIMPLE mode). */
+    public int getSewingHoleCount() {
+        return sewingHoleCount;
+    }
+
+    /** Sets the sewing hole count. */
+    public void setSewingHoleCount(int sewingHoleCount) {
+        this.sewingHoleCount = sewingHoleCount;
+    }
+
+    /** Returns the end margin in mm (distance from spine head/tail to outermost hole). */
+    public double getSewingEndMarginMm() {
+        return sewingEndMarginMm;
+    }
+
+    /** Sets the end margin in mm. */
+    public void setSewingEndMarginMm(double sewingEndMarginMm) {
+        this.sewingEndMarginMm = sewingEndMarginMm;
+    }
+
+    /** Returns the band count (BANDED mode). */
+    public int getSewingBandCount() {
+        return sewingBandCount;
+    }
+
+    /** Sets the band count. */
+    public void setSewingBandCount(int sewingBandCount) {
+        this.sewingBandCount = sewingBandCount;
+    }
+
+    /** Returns the band width in mm (BANDED mode). */
+    public double getSewingBandWidthMm() {
+        return sewingBandWidthMm;
+    }
+
+    /** Sets the band width in mm. */
+    public void setSewingBandWidthMm(double sewingBandWidthMm) {
+        this.sewingBandWidthMm = sewingBandWidthMm;
+    }
+
     /** Returns whether trim lines should be printed. */
     public boolean isTrimLines() {
         return trimLines;
@@ -289,6 +347,16 @@ public class WebSession {
     /** Sets whether trim lines should be printed. */
     public void setTrimLines(boolean trimLines) {
         this.trimLines = trimLines;
+    }
+
+    /** Returns the mutable page sequence, or null if no PDF has been loaded. */
+    public PageSequence getPageSequence() {
+        return pageSequence;
+    }
+
+    /** Sets the page sequence loaded from the uploaded PDF. */
+    public void setPageSequence(PageSequence pageSequence) {
+        this.pageSequence = pageSequence;
     }
 
     /** Returns the computed imposition result, or null if not yet computed. */
