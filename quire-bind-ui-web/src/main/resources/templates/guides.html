@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Binding Guides — QuireBind</title>
+    <link rel="stylesheet" th:href="@{/css/main.css}"/>
+    <script th:src="@{/js/htmx.min.js}" defer="defer"></script>
+</head>
+<body>
+
+<header class="app-header">
+    <div class="header-inner">
+        <a href="/" class="logo">QuireBind</a>
+        <nav class="header-nav">
+            <a th:href="@{/guides}" class="nav-link nav-link--active">Binding Guides</a>
+        </nav>
+    </div>
+</header>
+
+<div class="guides-shell">
+
+    <aside class="guides-sidebar">
+        <h2 class="sidebar-heading">Techniques</h2>
+        <ul class="guides-list">
+            <li th:each="g : ${guides}">
+                <a th:href="@{/guides(technique=${g.metadata.techniqueId})}"
+                   th:text="${g.metadata.title}"
+                   th:classappend="${selected != null and selected.metadata.techniqueId == g.metadata.techniqueId} ? 'active' : ''"
+                   class="guide-link">
+                </a>
+            </li>
+        </ul>
+    </aside>
+
+    <main class="guide-content" th:if="${selected != null}">
+        <header class="guide-header">
+            <h1 th:text="${selected.metadata.title}"></h1>
+            <p th:if="${selected.metadata.subtitle}" class="guide-subtitle"
+               th:text="${selected.metadata.subtitle}"></p>
+            <p class="guide-meta">
+                <span th:if="${not #strings.isEmpty(selected.metadata.difficulty)}">
+                    Difficulty: <strong th:text="${selected.metadata.difficulty}"></strong>
+                </span>
+                <span th:if="${not #strings.isEmpty(selected.metadata.difficulty) and not #strings.isEmpty(selected.metadata.timeEstimate)}">
+                    &nbsp;·&nbsp;
+                </span>
+                <span th:if="${not #strings.isEmpty(selected.metadata.timeEstimate)}">
+                    Time: <strong th:text="${selected.metadata.timeEstimate}"></strong>
+                </span>
+            </p>
+        </header>
+        <div class="guide-body" th:utext="${guideHtml}"></div>
+    </main>
+
+    <main class="guide-content guide-content--empty" th:unless="${selected != null}">
+        <p>Select a technique from the list.</p>
+    </main>
+
+</div>
+
+</body>
+</html>

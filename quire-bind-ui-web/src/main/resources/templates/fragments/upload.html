@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<body>
+
+<th:block th:fragment="step">
+    <!-- OOB step indicator update -->
+    <div id="step-indicator" class="step-indicator" hx-swap-oob="true">
+        <div th:each="n : ${#numbers.sequence(1,4)}"
+             th:classappend="${n == 1} ? 'active' : ''"
+             class="step-dot">
+            <span class="step-num" th:text="${n}">1</span>
+            <span class="step-label" th:switch="${n}">
+                <span th:case="1">Upload</span>
+                <span th:case="2">Binding</span>
+                <span th:case="3">Pages</span>
+                <span th:case="4">Export</span>
+            </span>
+        </div>
+        <div class="step-line"></div>
+    </div>
+
+    <div class="step-card">
+        <h2 class="step-title">Load Source</h2>
+        <p class="step-description">Upload the PDF you want to prepare for bookbinding.</p>
+
+        <div th:if="${error}" class="alert alert-error" th:text="${error}"></div>
+
+        <form hx-post="/wizard/upload"
+              hx-encoding="multipart/form-data"
+              hx-target="#wizard-content"
+              hx-swap="innerHTML"
+              hx-indicator=".upload-indicator">
+
+            <div class="field-group">
+                <label for="pdf-input" class="field-label">PDF file</label>
+                <div class="file-input-row">
+                    <input id="pdf-input" type="file" name="pdf" accept=".pdf" required="required"
+                           class="file-input"/>
+                </div>
+                <p th:if="${filename}" class="field-hint">
+                    Current file: <strong th:text="${filename}"></strong>
+                </p>
+            </div>
+
+            <div class="upload-indicator htmx-indicator">
+                <span class="spinner"></span> Uploading…
+            </div>
+
+            <div class="step-actions">
+                <span></span>
+                <button type="submit" class="btn btn-primary">Next →</button>
+            </div>
+        </form>
+    </div>
+</th:block>
+
+</body>
+</html>

@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<body>
+
+<th:block th:fragment="step">
+    <!-- OOB step indicator update -->
+    <div id="step-indicator" class="step-indicator" hx-swap-oob="true">
+        <div th:each="n : ${#numbers.sequence(1,4)}"
+             th:classappend="${n == 2} ? 'active' : (${n lt 2} ? 'done' : '')"
+             class="step-dot">
+            <span class="step-num" th:text="${n}">1</span>
+            <span class="step-label" th:switch="${n}">
+                <span th:case="1">Upload</span>
+                <span th:case="2">Binding</span>
+                <span th:case="3">Pages</span>
+                <span th:case="4">Export</span>
+            </span>
+        </div>
+        <div class="step-line"></div>
+    </div>
+
+    <div class="step-card">
+        <h2 class="step-title">Binding Configuration</h2>
+        <p class="step-description">Choose the binding technique and paper settings.</p>
+
+        <form hx-post="/wizard/binding"
+              hx-target="#wizard-content"
+              hx-swap="innerHTML">
+
+            <div class="form-grid">
+                <div class="field-group">
+                    <label for="technique" class="field-label">Binding technique</label>
+                    <select id="technique" name="technique" class="select">
+                        <option th:each="t : ${techniques}"
+                                th:value="${t.name()}"
+                                th:text="${t.name().replace('_',' ').toLowerCase()}"
+                                th:selected="${session.technique == t}">
+                        </option>
+                    </select>
+                </div>
+
+                <div class="field-group">
+                    <label for="paperSize" class="field-label">Paper size</label>
+                    <select id="paperSize" name="paperSize" class="select">
+                        <option th:each="p : ${paperSizes}"
+                                th:value="${p.name()}"
+                                th:text="${p.name()}"
+                                th:selected="${session.paperSize == p}">
+                        </option>
+                    </select>
+                </div>
+
+                <div class="field-group">
+                    <label class="field-label">Reading direction</label>
+                    <div class="radio-row">
+                        <label class="radio-label">
+                            <input type="radio" name="readingDirection" value="LTR"
+                                   th:checked="${session.readingDirection.name() == 'LTR'}"/>
+                            Left to right
+                        </label>
+                        <label class="radio-label">
+                            <input type="radio" name="readingDirection" value="RTL"
+                                   th:checked="${session.readingDirection.name() == 'RTL'}"/>
+                            Right to left
+                        </label>
+                    </div>
+                </div>
+
+                <div class="field-group">
+                    <label for="sigSize" class="field-label">Sheets per signature</label>
+                    <input id="sigSize" type="number" name="signatureSize" min="1" max="16"
+                           th:value="${session.signatureSize}" class="input-narrow"/>
+                    <p class="field-hint">Ignored for single-signature techniques (Group B).</p>
+                </div>
+            </div>
+
+            <div class="step-actions">
+                <button type="button" class="btn btn-secondary"
+                        hx-post="/wizard/back/upload"
+                        hx-target="#wizard-content"
+                        hx-swap="innerHTML">← Back</button>
+                <button type="submit" class="btn btn-primary">Next →</button>
+            </div>
+        </form>
+    </div>
+</th:block>
+
+</body>
+</html>
