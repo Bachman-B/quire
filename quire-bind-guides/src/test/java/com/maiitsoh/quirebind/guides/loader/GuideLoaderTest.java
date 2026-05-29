@@ -115,9 +115,9 @@ class GuideLoaderTest {
     }
 
     @Test
-    void loadAllReturnsOneGuide() throws IOException {
+    void loadAllReturnsNineGuides() throws IOException {
         List<BindingGuide> guides = GuideLoader.loadAll();
-        assertEquals(1, guides.size());
+        assertEquals(9, guides.size());
     }
 
     @Test
@@ -127,7 +127,7 @@ class GuideLoaderTest {
     }
 
     @Test
-    void loadAllGuideHasSaddleStitchTechniqueId() throws IOException {
+    void loadAllFirstGuideHasSaddleStitchTechniqueId() throws IOException {
         List<BindingGuide> guides = GuideLoader.loadAll();
         assertEquals("saddle_stitch", guides.get(0).getMetadata().getTechniqueId());
     }

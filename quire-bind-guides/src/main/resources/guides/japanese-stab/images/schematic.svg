@@ -1,0 +1,75 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 260" width="400" height="260">
+  <rect width="400" height="260" fill="#ffffff"/>
+
+  <!-- Title -->
+  <text x="200" y="18" text-anchor="middle" font-family="sans-serif" font-size="12" font-weight="bold" fill="#1a1a1a">Japanese Stab Binding — 4-Hole Pattern</text>
+
+  <!-- Stack of unfolded pages, viewed from front/slight angle -->
+  <!-- Front page face: rect from x=110 to x=360, y=38 to y=230 -->
+  <rect x="110" y="38" width="250" height="192" fill="#f5f5f5" stroke="#1a1a1a" stroke-width="1.5"/>
+
+  <!-- Side/spine edge (left) — shows the stab depth -->
+  <polygon points="85,50 110,38 110,230 85,242" fill="#f5f5f5" stroke="#1a1a1a" stroke-width="1.5"/>
+
+  <!-- Top edge (slight perspective) -->
+  <polygon points="85,50 110,38 360,38 335,50" fill="#f5f5f5" stroke="#1a1a1a" stroke-width="1.2"/>
+
+  <!-- Page line stack on front face (to show multiple pages) -->
+  <line x1="110" y1="50"  x2="360" y2="50"  stroke="#1a1a1a" stroke-width="0.4"/>
+  <line x1="110" y1="62"  x2="360" y2="62"  stroke="#1a1a1a" stroke-width="0.4"/>
+  <line x1="110" y1="74"  x2="360" y2="74"  stroke="#1a1a1a" stroke-width="0.4"/>
+  <line x1="110" y1="86"  x2="360" y2="86"  stroke="#1a1a1a" stroke-width="0.4"/>
+  <line x1="110" y1="98"  x2="360" y2="98"  stroke="#1a1a1a" stroke-width="0.4"/>
+  <line x1="110" y1="110" x2="360" y2="110" stroke="#1a1a1a" stroke-width="0.4"/>
+  <line x1="110" y1="122" x2="360" y2="122" stroke="#1a1a1a" stroke-width="0.4"/>
+  <line x1="110" y1="134" x2="360" y2="134" stroke="#1a1a1a" stroke-width="0.4"/>
+  <line x1="110" y1="146" x2="360" y2="146" stroke="#1a1a1a" stroke-width="0.4"/>
+  <line x1="110" y1="158" x2="360" y2="158" stroke="#1a1a1a" stroke-width="0.4"/>
+  <line x1="110" y1="170" x2="360" y2="170" stroke="#1a1a1a" stroke-width="0.4"/>
+  <line x1="110" y1="182" x2="360" y2="182" stroke="#1a1a1a" stroke-width="0.4"/>
+  <line x1="110" y1="194" x2="360" y2="194" stroke="#1a1a1a" stroke-width="0.4"/>
+  <line x1="110" y1="206" x2="360" y2="206" stroke="#1a1a1a" stroke-width="0.4"/>
+  <line x1="110" y1="218" x2="360" y2="218" stroke="#1a1a1a" stroke-width="0.4"/>
+
+  <!-- 4 stab holes — positioned about 20px from left spine edge on front face -->
+  <!-- x=138 (20mm in from spine edge), evenly spaced y -->
+  <!-- Holes at y=75, 115, 155, 195 -->
+  <circle cx="138" cy="75"  r="5" fill="#ffffff" stroke="#1a1a1a" stroke-width="1.5"/>
+  <circle cx="138" cy="115" r="5" fill="#ffffff" stroke="#1a1a1a" stroke-width="1.5"/>
+  <circle cx="138" cy="155" r="5" fill="#ffffff" stroke="#1a1a1a" stroke-width="1.5"/>
+  <circle cx="138" cy="195" r="5" fill="#ffffff" stroke="#1a1a1a" stroke-width="1.5"/>
+
+  <!-- Thread path — 4-hole simple stab pattern (front view) -->
+  <!-- Pattern: start at hole 1 front, down spine outside to hole 4, back up inside,
+       wrapping around head and tail, and loops around each hole -->
+  <!-- Front face thread: vertical line connecting holes (outside front) -->
+  <line x1="143" y1="75"  x2="143" y2="195" stroke="#cc3333" stroke-width="2"/>
+
+  <!-- Wrap around top (head): small arc at hole 1 going over top edge of spine -->
+  <path d="M 138,75 C 125,60 120,55 128,50 C 133,48 140,50 143,55" fill="none" stroke="#cc3333" stroke-width="2"/>
+
+  <!-- Wrap around bottom (tail): small arc at hole 4 going over bottom edge -->
+  <path d="M 138,195 C 125,210 120,215 128,220 C 133,222 140,220 143,215" fill="none" stroke="#cc3333" stroke-width="2"/>
+
+  <!-- Inside pass (back of pages) dashed, connecting holes -->
+  <line x1="133" y1="75"  x2="133" y2="195" stroke="#cc3333" stroke-width="1.5" stroke-dasharray="5,3"/>
+
+  <!-- Hole number labels -->
+  <text x="152" y="79"  font-family="sans-serif" font-size="11" fill="#1a1a1a">1</text>
+  <text x="152" y="119" font-family="sans-serif" font-size="11" fill="#1a1a1a">2</text>
+  <text x="152" y="159" font-family="sans-serif" font-size="11" fill="#1a1a1a">3</text>
+  <text x="152" y="199" font-family="sans-serif" font-size="11" fill="#1a1a1a">4</text>
+
+  <!-- Labels -->
+  <line x1="95" y1="146" x2="60" y2="146" stroke="#1a1a1a" stroke-width="0.75"/>
+  <text x="58" y="150" text-anchor="end" font-family="sans-serif" font-size="10" fill="#1a1a1a">Spine edge</text>
+
+  <line x1="138" y1="32" x2="138" y2="24" stroke="#1a1a1a" stroke-width="0.75"/>
+  <text x="138" y="21" text-anchor="middle" font-family="sans-serif" font-size="10" fill="#1a1a1a">Stab holes</text>
+
+  <!-- Legend -->
+  <line x1="22" y1="248" x2="46" y2="248" stroke="#cc3333" stroke-width="2"/>
+  <text x="50" y="252" font-family="sans-serif" font-size="10" fill="#1a1a1a">Thread (front)</text>
+  <line x1="140" y1="248" x2="164" y2="248" stroke="#cc3333" stroke-width="2" stroke-dasharray="5,3"/>
+  <text x="168" y="252" font-family="sans-serif" font-size="10" fill="#1a1a1a">Thread (back)</text>
+</svg>

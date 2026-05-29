@@ -1,0 +1,120 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 260" width="400" height="260">
+  <rect width="400" height="260" fill="#ffffff"/>
+
+  <!-- Title -->
+  <text x="200" y="18" text-anchor="middle" font-family="sans-serif" font-size="12" font-weight="bold" fill="#1a1a1a">Coptic Binding — Exposed Spine View</text>
+
+  <!-- 4 signatures standing side-by-side, spine facing viewer -->
+  <!-- Each sig: a thin rectangle representing the spine edge -->
+  <!-- Signatures at x positions: 80, 155, 230, 305 -->
+  <!-- Each sig spine width ~15px, height 160px -->
+
+  <!-- Sig 1 -->
+  <rect x="72"  y="50" width="66" height="165" rx="1" fill="#f5f5f5" stroke="#1a1a1a" stroke-width="1.5"/>
+  <!-- Sig 2 -->
+  <rect x="148" y="50" width="66" height="165" rx="1" fill="#f5f5f5" stroke="#1a1a1a" stroke-width="1.5"/>
+  <!-- Sig 3 -->
+  <rect x="224" y="50" width="66" height="165" rx="1" fill="#f5f5f5" stroke="#1a1a1a" stroke-width="1.5"/>
+  <!-- Sig 4 -->
+  <rect x="300" y="50" width="66" height="165" rx="1" fill="#f5f5f5" stroke="#1a1a1a" stroke-width="1.5"/>
+
+  <!-- Page lines inside each sig to show stacking -->
+  <line x1="72"  y1="80"  x2="138" y2="80"  stroke="#1a1a1a" stroke-width="0.5"/>
+  <line x1="72"  y1="110" x2="138" y2="110" stroke="#1a1a1a" stroke-width="0.5"/>
+  <line x1="72"  y1="140" x2="138" y2="140" stroke="#1a1a1a" stroke-width="0.5"/>
+  <line x1="72"  y1="170" x2="138" y2="170" stroke="#1a1a1a" stroke-width="0.5"/>
+
+  <line x1="148" y1="80"  x2="214" y2="80"  stroke="#1a1a1a" stroke-width="0.5"/>
+  <line x1="148" y1="110" x2="214" y2="110" stroke="#1a1a1a" stroke-width="0.5"/>
+  <line x1="148" y1="140" x2="214" y2="140" stroke="#1a1a1a" stroke-width="0.5"/>
+  <line x1="148" y1="170" x2="214" y2="170" stroke="#1a1a1a" stroke-width="0.5"/>
+
+  <line x1="224" y1="80"  x2="290" y2="80"  stroke="#1a1a1a" stroke-width="0.5"/>
+  <line x1="224" y1="110" x2="290" y2="110" stroke="#1a1a1a" stroke-width="0.5"/>
+  <line x1="224" y1="140" x2="290" y2="140" stroke="#1a1a1a" stroke-width="0.5"/>
+  <line x1="224" y1="170" x2="290" y2="170" stroke="#1a1a1a" stroke-width="0.5"/>
+
+  <line x1="300" y1="80"  x2="366" y2="80"  stroke="#1a1a1a" stroke-width="0.5"/>
+  <line x1="300" y1="110" x2="366" y2="110" stroke="#1a1a1a" stroke-width="0.5"/>
+  <line x1="300" y1="140" x2="366" y2="140" stroke="#1a1a1a" stroke-width="0.5"/>
+  <line x1="300" y1="170" x2="366" y2="170" stroke="#1a1a1a" stroke-width="0.5"/>
+
+  <!-- Sewing holes on RIGHT edge of each sig (the exposed spine) -->
+  <!-- Sig 1 right edge x=138; Sig 2 left=148, right=214; Sig3 left=224,right=290; Sig4 left=300 -->
+  <!-- Holes at y=65, 95, 125, 155, 185 for each spine -->
+  <!-- Between sig1-sig2: x between 138 and 148; between sig2-sig3: between 214 and 224; etc. -->
+
+  <!-- Coptic chain stitch: figure-8 pattern between adjacent signatures -->
+  <!-- Between Sig1 (right x=138) and Sig2 (left x=148) -->
+
+  <!-- Hole dots on sig1 right spine -->
+  <circle cx="138" cy="65"  r="3" fill="#ffffff" stroke="#1a1a1a" stroke-width="1.2"/>
+  <circle cx="138" cy="95"  r="3" fill="#ffffff" stroke="#1a1a1a" stroke-width="1.2"/>
+  <circle cx="138" cy="125" r="3" fill="#ffffff" stroke="#1a1a1a" stroke-width="1.2"/>
+  <circle cx="138" cy="155" r="3" fill="#ffffff" stroke="#1a1a1a" stroke-width="1.2"/>
+  <circle cx="138" cy="185" r="3" fill="#ffffff" stroke="#1a1a1a" stroke-width="1.2"/>
+
+  <!-- Hole dots on sig2 left spine -->
+  <circle cx="148" cy="65"  r="3" fill="#ffffff" stroke="#1a1a1a" stroke-width="1.2"/>
+  <circle cx="148" cy="95"  r="3" fill="#ffffff" stroke="#1a1a1a" stroke-width="1.2"/>
+  <circle cx="148" cy="125" r="3" fill="#ffffff" stroke="#1a1a1a" stroke-width="1.2"/>
+  <circle cx="148" cy="155" r="3" fill="#ffffff" stroke="#1a1a1a" stroke-width="1.2"/>
+  <circle cx="148" cy="185" r="3" fill="#ffffff" stroke="#1a1a1a" stroke-width="1.2"/>
+
+  <!-- Chain stitch between sig1 and sig2: figure-8 loops -->
+  <path d="M 138,65 C 140,58 146,58 148,65" fill="none" stroke="#cc3333" stroke-width="1.5"/>
+  <path d="M 138,65 C 140,73 143,73 143,80 C 143,87 140,87 138,95" fill="none" stroke="#cc3333" stroke-width="1.5"/>
+  <path d="M 148,65 C 146,73 143,73 143,80 C 143,87 146,87 148,95" fill="none" stroke="#cc3333" stroke-width="1.5"/>
+  <path d="M 138,95 C 140,88 146,88 148,95" fill="none" stroke="#cc3333" stroke-width="0.75" stroke-dasharray="2,2"/>
+
+  <path d="M 138,95  C 140,103 143,103 143,110 C 143,117 140,117 138,125" fill="none" stroke="#cc3333" stroke-width="1.5"/>
+  <path d="M 148,95  C 146,103 143,103 143,110 C 143,117 146,117 148,125" fill="none" stroke="#cc3333" stroke-width="1.5"/>
+  <path d="M 138,125 C 140,118 146,118 148,125" fill="none" stroke="#cc3333" stroke-width="0.75" stroke-dasharray="2,2"/>
+
+  <path d="M 138,125 C 140,133 143,133 143,140 C 143,147 140,147 138,155" fill="none" stroke="#cc3333" stroke-width="1.5"/>
+  <path d="M 148,125 C 146,133 143,133 143,140 C 143,147 146,147 148,155" fill="none" stroke="#cc3333" stroke-width="1.5"/>
+
+  <path d="M 138,155 C 140,163 143,163 143,170 C 143,177 140,177 138,185" fill="none" stroke="#cc3333" stroke-width="1.5"/>
+  <path d="M 148,155 C 146,163 143,163 143,170 C 143,177 146,177 148,185" fill="none" stroke="#cc3333" stroke-width="1.5"/>
+
+  <!-- Repeat minimal chain between sig2-sig3 and sig3-sig4 (simplified, just loops) -->
+  <!-- Sig2 right / Sig3 left -->
+  <circle cx="214" cy="95"  r="3" fill="#ffffff" stroke="#1a1a1a" stroke-width="1.2"/>
+  <circle cx="214" cy="125" r="3" fill="#ffffff" stroke="#1a1a1a" stroke-width="1.2"/>
+  <circle cx="214" cy="155" r="3" fill="#ffffff" stroke="#1a1a1a" stroke-width="1.2"/>
+  <circle cx="224" cy="95"  r="3" fill="#ffffff" stroke="#1a1a1a" stroke-width="1.2"/>
+  <circle cx="224" cy="125" r="3" fill="#ffffff" stroke="#1a1a1a" stroke-width="1.2"/>
+  <circle cx="224" cy="155" r="3" fill="#ffffff" stroke="#1a1a1a" stroke-width="1.2"/>
+
+  <path d="M 214,95  C 216,103 219,103 219,110 C 219,117 216,117 214,125" fill="none" stroke="#cc3333" stroke-width="1.5"/>
+  <path d="M 224,95  C 222,103 219,103 219,110 C 219,117 222,117 224,125" fill="none" stroke="#cc3333" stroke-width="1.5"/>
+  <path d="M 214,125 C 216,133 219,133 219,140 C 219,147 216,147 214,155" fill="none" stroke="#cc3333" stroke-width="1.5"/>
+  <path d="M 224,125 C 222,133 219,133 219,140 C 219,147 222,147 224,155" fill="none" stroke="#cc3333" stroke-width="1.5"/>
+
+  <!-- Sig3 right / Sig4 left -->
+  <circle cx="290" cy="95"  r="3" fill="#ffffff" stroke="#1a1a1a" stroke-width="1.2"/>
+  <circle cx="290" cy="125" r="3" fill="#ffffff" stroke="#1a1a1a" stroke-width="1.2"/>
+  <circle cx="290" cy="155" r="3" fill="#ffffff" stroke="#1a1a1a" stroke-width="1.2"/>
+  <circle cx="300" cy="95"  r="3" fill="#ffffff" stroke="#1a1a1a" stroke-width="1.2"/>
+  <circle cx="300" cy="125" r="3" fill="#ffffff" stroke="#1a1a1a" stroke-width="1.2"/>
+  <circle cx="300" cy="155" r="3" fill="#ffffff" stroke="#1a1a1a" stroke-width="1.2"/>
+
+  <path d="M 290,95  C 292,103 295,103 295,110 C 295,117 292,117 290,125" fill="none" stroke="#cc3333" stroke-width="1.5"/>
+  <path d="M 300,95  C 298,103 295,103 295,110 C 295,117 298,117 300,125" fill="none" stroke="#cc3333" stroke-width="1.5"/>
+  <path d="M 290,125 C 292,133 295,133 295,140 C 295,147 292,147 290,155" fill="none" stroke="#cc3333" stroke-width="1.5"/>
+  <path d="M 300,125 C 298,133 295,133 295,140 C 295,147 298,147 300,155" fill="none" stroke="#cc3333" stroke-width="1.5"/>
+
+  <!-- Sig labels -->
+  <text x="105"  y="232" text-anchor="middle" font-family="sans-serif" font-size="10" fill="#1a1a1a">Sig 1</text>
+  <text x="181"  y="232" text-anchor="middle" font-family="sans-serif" font-size="10" fill="#1a1a1a">Sig 2</text>
+  <text x="257"  y="232" text-anchor="middle" font-family="sans-serif" font-size="10" fill="#1a1a1a">Sig 3</text>
+  <text x="333"  y="232" text-anchor="middle" font-family="sans-serif" font-size="10" fill="#1a1a1a">Sig 4</text>
+
+  <!-- Chain stitch label -->
+  <line x1="143" y1="80" x2="143" y2="35" stroke="#1a1a1a" stroke-width="0.75"/>
+  <text x="143" y="32" text-anchor="middle" font-family="sans-serif" font-size="10" fill="#1a1a1a">Coptic chain stitch</text>
+
+  <!-- Legend -->
+  <line x1="22" y1="248" x2="46" y2="248" stroke="#cc3333" stroke-width="2"/>
+  <text x="50" y="252" font-family="sans-serif" font-size="10" fill="#1a1a1a">Thread — figure-8 loop</text>
+</svg>

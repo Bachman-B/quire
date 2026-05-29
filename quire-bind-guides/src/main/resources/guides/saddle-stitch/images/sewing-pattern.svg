@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 260" width="400" height="260">
+  <rect width="400" height="260" fill="#ffffff"/>
+
+  <!-- Title -->
+  <text x="200" y="20" text-anchor="middle" font-family="sans-serif" font-size="12" font-weight="bold" fill="#1a1a1a">Saddle Stitch — 5-Hole Sewing Pattern</text>
+
+  <!-- Open booklet rectangle -->
+  <rect x="60" y="40" width="280" height="185" fill="#f5f5f5" stroke="#1a1a1a" stroke-width="1.5"/>
+
+  <!-- Spine fold centre line -->
+  <line x1="200" y1="40" x2="200" y2="225" stroke="#1a1a1a" stroke-width="1.5" stroke-dasharray="5,3"/>
+
+  <!-- 5 sewing holes on the spine fold -->
+  <!-- Hole positions: y = 65, 95, 132, 170, 200 -->
+  <circle cx="200" cy="65"  r="5" fill="#ffffff" stroke="#1a1a1a" stroke-width="1.5"/>
+  <circle cx="200" cy="100" r="5" fill="#ffffff" stroke="#1a1a1a" stroke-width="1.5"/>
+  <circle cx="200" cy="132" r="5" fill="#ffffff" stroke="#1a1a1a" stroke-width="1.5"/>
+  <circle cx="200" cy="164" r="5" fill="#ffffff" stroke="#1a1a1a" stroke-width="1.5"/>
+  <circle cx="200" cy="200" r="5" fill="#ffffff" stroke="#1a1a1a" stroke-width="1.5"/>
+
+  <!-- Thread path: start outside at hole 3, go in, travel to hole 1 inside, out, back to 3 outside,
+       down to hole 5 inside, out, back to 3 outside to tie -->
+  <!-- Outside path shown on the right of the fold line (+6 px offset) -->
+  <!-- Inside path shown on the left side (-6 px offset) -->
+
+  <!-- Segment: start at hole 3 (enter) → hole 1 inside -->
+  <line x1="206" y1="132" x2="206" y2="65" stroke="#cc3333" stroke-width="2" stroke-dasharray="6,3"/>
+  <!-- Hole 1 exit outside → back to hole 3 outside -->
+  <line x1="194" y1="65"  x2="194" y2="132" stroke="#cc3333" stroke-width="2"/>
+  <!-- Hole 3 entry → hole 5 inside -->
+  <line x1="206" y1="132" x2="206" y2="200" stroke="#cc3333" stroke-width="2" stroke-dasharray="6,3"/>
+  <!-- Hole 5 exit outside → back to hole 3 outside to tie -->
+  <line x1="194" y1="200" x2="194" y2="132" stroke="#cc3333" stroke-width="2"/>
+
+  <!-- Tie knot marker at hole 3 start -->
+  <circle cx="200" cy="132" r="5" fill="#cc3333" stroke="none"/>
+
+  <!-- Hole number labels -->
+  <text x="215" y="69"  font-family="sans-serif" font-size="11" fill="#1a1a1a">1</text>
+  <text x="215" y="104" font-family="sans-serif" font-size="11" fill="#1a1a1a">2</text>
+  <text x="215" y="136" font-family="sans-serif" font-size="11" fill="#1a1a1a">3</text>
+  <text x="215" y="168" font-family="sans-serif" font-size="11" fill="#1a1a1a">4</text>
+  <text x="215" y="204" font-family="sans-serif" font-size="11" fill="#1a1a1a">5</text>
+
+  <!-- Legend -->
+  <line x1="60" y1="244" x2="88" y2="244" stroke="#cc3333" stroke-width="2"/>
+  <text x="93" y="248" font-family="sans-serif" font-size="10" fill="#1a1a1a">Outside</text>
+  <line x1="145" y1="244" x2="173" y2="244" stroke="#cc3333" stroke-width="2" stroke-dasharray="5,3"/>
+  <text x="178" y="248" font-family="sans-serif" font-size="10" fill="#1a1a1a">Inside</text>
+  <circle cx="240" cy="244" r="4" fill="#cc3333"/>
+  <text x="248" y="248" font-family="sans-serif" font-size="10" fill="#1a1a1a">Start/tie at hole 3</text>
+
+  <!-- Spine label -->
+  <text x="200" y="236" text-anchor="middle" font-family="sans-serif" font-size="10" fill="#1a1a1a">← Spine fold →</text>
+</svg>

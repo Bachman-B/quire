@@ -1,0 +1,90 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 260" width="400" height="260">
+  <rect width="400" height="260" fill="#ffffff"/>
+
+  <!-- Title -->
+  <text x="200" y="18" text-anchor="middle" font-family="sans-serif" font-size="12" font-weight="bold" fill="#1a1a1a">Perfect Binding — Cross-Section (top view)</text>
+
+  <!-- Wrap-around cover (outer shape) -->
+  <!-- Left cover panel -->
+  <rect x="30"  y="60" width="80" height="150" fill="#f5f5f5" stroke="#1a1a1a" stroke-width="2"/>
+  <!-- Spine panel of cover -->
+  <rect x="110" y="60" width="28" height="150" fill="#f5f5f5" stroke="#1a1a1a" stroke-width="2"/>
+  <!-- Right cover panel -->
+  <rect x="138" y="60" width="80" height="150" fill="#f5f5f5" stroke="#1a1a1a" stroke-width="2"/>
+
+  <!-- Page block — individual pages (not folded), sitting inside cover -->
+  <!-- Pages as a solid stack -->
+  <rect x="112" y="65" width="24" height="140" fill="#f5f5f5" stroke="#1a1a1a" stroke-width="1.5"/>
+  <!-- Individual page lines to suggest loose pages -->
+  <line x1="112" y1="79"  x2="136" y2="79"  stroke="#1a1a1a" stroke-width="0.5"/>
+  <line x1="112" y1="93"  x2="136" y2="93"  stroke="#1a1a1a" stroke-width="0.5"/>
+  <line x1="112" y1="107" x2="136" y2="107" stroke="#1a1a1a" stroke-width="0.5"/>
+  <line x1="112" y1="121" x2="136" y2="121" stroke="#1a1a1a" stroke-width="0.5"/>
+  <line x1="112" y1="135" x2="136" y2="135" stroke="#1a1a1a" stroke-width="0.5"/>
+  <line x1="112" y1="149" x2="136" y2="149" stroke="#1a1a1a" stroke-width="0.5"/>
+  <line x1="112" y1="163" x2="136" y2="163" stroke="#1a1a1a" stroke-width="0.5"/>
+  <line x1="112" y1="177" x2="136" y2="177" stroke="#1a1a1a" stroke-width="0.5"/>
+  <line x1="112" y1="191" x2="136" y2="191" stroke="#1a1a1a" stroke-width="0.5"/>
+
+  <!-- Adhesive layer between page spine edges and cover spine -->
+  <!-- Left adhesive strip (between left cover spine and page block) -->
+  <rect x="110" y="65" width="4" height="140" fill="#3355cc" stroke="none"/>
+  <!-- Right adhesive strip -->
+  <rect x="134" y="65" width="4" height="140" fill="#3355cc" stroke="none"/>
+
+  <!-- Page stack extending both directions from spine -->
+  <!-- Left pages sticking out from cover left side -->
+  <rect x="45" y="67" width="65" height="136" fill="#f5f5f5" stroke="#1a1a1a" stroke-width="0.75"/>
+  <!-- Page lines left -->
+  <line x1="45" y1="81"  x2="110" y2="81"  stroke="#1a1a1a" stroke-width="0.4"/>
+  <line x1="45" y1="95"  x2="110" y2="95"  stroke="#1a1a1a" stroke-width="0.4"/>
+  <line x1="45" y1="109" x2="110" y2="109" stroke="#1a1a1a" stroke-width="0.4"/>
+  <line x1="45" y1="123" x2="110" y2="123" stroke="#1a1a1a" stroke-width="0.4"/>
+  <line x1="45" y1="137" x2="110" y2="137" stroke="#1a1a1a" stroke-width="0.4"/>
+  <line x1="45" y1="151" x2="110" y2="151" stroke="#1a1a1a" stroke-width="0.4"/>
+  <line x1="45" y1="165" x2="110" y2="165" stroke="#1a1a1a" stroke-width="0.4"/>
+  <line x1="45" y1="179" x2="110" y2="179" stroke="#1a1a1a" stroke-width="0.4"/>
+  <line x1="45" y1="193" x2="110" y2="193" stroke="#1a1a1a" stroke-width="0.4"/>
+
+  <!-- Right pages -->
+  <rect x="138" y="67" width="65" height="136" fill="#f5f5f5" stroke="#1a1a1a" stroke-width="0.75"/>
+  <line x1="138" y1="81"  x2="203" y2="81"  stroke="#1a1a1a" stroke-width="0.4"/>
+  <line x1="138" y1="95"  x2="203" y2="95"  stroke="#1a1a1a" stroke-width="0.4"/>
+  <line x1="138" y1="109" x2="203" y2="109" stroke="#1a1a1a" stroke-width="0.4"/>
+  <line x1="138" y1="123" x2="203" y2="123" stroke="#1a1a1a" stroke-width="0.4"/>
+  <line x1="138" y1="137" x2="203" y2="137" stroke="#1a1a1a" stroke-width="0.4"/>
+  <line x1="138" y1="151" x2="203" y2="151" stroke="#1a1a1a" stroke-width="0.4"/>
+  <line x1="138" y1="165" x2="203" y2="165" stroke="#1a1a1a" stroke-width="0.4"/>
+  <line x1="138" y1="179" x2="203" y2="179" stroke="#1a1a1a" stroke-width="0.4"/>
+  <line x1="138" y1="193" x2="203" y2="193" stroke="#1a1a1a" stroke-width="0.4"/>
+
+  <!-- Labels -->
+  <!-- Pages -->
+  <line x1="70" y1="58" x2="70" y2="48" stroke="#1a1a1a" stroke-width="0.75"/>
+  <text x="70" y="44" text-anchor="middle" font-family="sans-serif" font-size="10" fill="#1a1a1a">Pages</text>
+
+  <!-- Adhesive -->
+  <line x1="112" y1="135" x2="94" y2="135" stroke="#1a1a1a" stroke-width="0.75"/>
+  <text x="92" y="139" text-anchor="end" font-family="sans-serif" font-size="10" fill="#1a1a1a">Adhesive</text>
+
+  <!-- Cover label -->
+  <line x1="70"  y1="212" x2="70"  y2="222" stroke="#1a1a1a" stroke-width="0.75"/>
+  <text x="70"  y="232" text-anchor="middle" font-family="sans-serif" font-size="10" fill="#1a1a1a">Cover</text>
+
+  <!-- Spine label -->
+  <line x1="124" y1="212" x2="124" y2="222" stroke="#1a1a1a" stroke-width="0.75"/>
+  <text x="124" y="232" text-anchor="middle" font-family="sans-serif" font-size="10" fill="#1a1a1a">Spine</text>
+
+  <!-- Right cover label -->
+  <line x1="180" y1="212" x2="180" y2="222" stroke="#1a1a1a" stroke-width="0.75"/>
+  <text x="180" y="232" text-anchor="middle" font-family="sans-serif" font-size="10" fill="#1a1a1a">Cover</text>
+
+  <!-- Legend -->
+  <rect x="250" y="140" width="12" height="10" fill="#3355cc"/>
+  <text x="266" y="150" font-family="sans-serif" font-size="10" fill="#1a1a1a">Adhesive (PVA)</text>
+  <rect x="250" y="157" width="12" height="10" fill="#f5f5f5" stroke="#1a1a1a" stroke-width="1"/>
+  <text x="266" y="167" font-family="sans-serif" font-size="10" fill="#1a1a1a">Paper / Cover</text>
+
+  <!-- View label -->
+  <text x="200" y="250" text-anchor="middle" font-family="sans-serif" font-size="10" fill="#888888">View from top (head of book)</text>
+</svg>

@@ -1,0 +1,102 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 260" width="400" height="260">
+  <rect width="400" height="260" fill="#ffffff"/>
+
+  <!-- Title -->
+  <text x="200" y="18" text-anchor="middle" font-family="sans-serif" font-size="12" font-weight="bold" fill="#1a1a1a">Sewn Signatures — Isometric View</text>
+
+  <!-- 5 signatures standing side-by-side, each is a folded page stack shown as a thin trapezoid -->
+  <!-- We use a slight tilt to give a 3/4 perspective look -->
+  <!-- Signature geometry: spine edge at top, fore-edge at bottom, each ~50px wide, ~30px deep -->
+
+  <!-- Signature positions (spine top-left x, y) -->
+  <!-- sig 1: left-most, sig 5: right-most -->
+
+  <!-- Helper: each sig is a parallelogram: top-left, top-right, bottom-right, bottom-left -->
+  <!-- Top face (pages) + front face (spine) -->
+
+  <!-- Signature 1 -->
+  <polygon points="46,200 86,200 96,70 56,70" fill="#f5f5f5" stroke="#1a1a1a" stroke-width="1.5"/>
+  <!-- page lines inside sig 1 -->
+  <line x1="50" y1="185" x2="90" y2="185" stroke="#1a1a1a" stroke-width="0.5"/>
+  <line x1="52" y1="168" x2="92" y2="168" stroke="#1a1a1a" stroke-width="0.5"/>
+  <line x1="54" y1="151" x2="94" y2="151" stroke="#1a1a1a" stroke-width="0.5"/>
+  <!-- Spine fold line -->
+  <line x1="56" y1="70" x2="46" y2="200" stroke="#1a1a1a" stroke-width="1.5"/>
+
+  <!-- Signature 2 -->
+  <polygon points="96,200 136,200 146,70 106,70" fill="#f5f5f5" stroke="#1a1a1a" stroke-width="1.5"/>
+  <line x1="100" y1="185" x2="140" y2="185" stroke="#1a1a1a" stroke-width="0.5"/>
+  <line x1="102" y1="168" x2="142" y2="168" stroke="#1a1a1a" stroke-width="0.5"/>
+  <line x1="104" y1="151" x2="144" y2="151" stroke="#1a1a1a" stroke-width="0.5"/>
+  <line x1="106" y1="70" x2="96"  y2="200" stroke="#1a1a1a" stroke-width="1.5"/>
+
+  <!-- Signature 3 -->
+  <polygon points="146,200 186,200 196,70 156,70" fill="#f5f5f5" stroke="#1a1a1a" stroke-width="1.5"/>
+  <line x1="150" y1="185" x2="190" y2="185" stroke="#1a1a1a" stroke-width="0.5"/>
+  <line x1="152" y1="168" x2="192" y2="168" stroke="#1a1a1a" stroke-width="0.5"/>
+  <line x1="154" y1="151" x2="194" y2="151" stroke="#1a1a1a" stroke-width="0.5"/>
+  <line x1="156" y1="70" x2="146" y2="200" stroke="#1a1a1a" stroke-width="1.5"/>
+
+  <!-- Signature 4 -->
+  <polygon points="196,200 236,200 246,70 206,70" fill="#f5f5f5" stroke="#1a1a1a" stroke-width="1.5"/>
+  <line x1="200" y1="185" x2="240" y2="185" stroke="#1a1a1a" stroke-width="0.5"/>
+  <line x1="202" y1="168" x2="242" y2="168" stroke="#1a1a1a" stroke-width="0.5"/>
+  <line x1="204" y1="151" x2="244" y2="151" stroke="#1a1a1a" stroke-width="0.5"/>
+  <line x1="206" y1="70" x2="196" y2="200" stroke="#1a1a1a" stroke-width="1.5"/>
+
+  <!-- Signature 5 -->
+  <polygon points="246,200 286,200 296,70 256,70" fill="#f5f5f5" stroke="#1a1a1a" stroke-width="1.5"/>
+  <line x1="250" y1="185" x2="290" y2="185" stroke="#1a1a1a" stroke-width="0.5"/>
+  <line x1="252" y1="168" x2="292" y2="168" stroke="#1a1a1a" stroke-width="0.5"/>
+  <line x1="254" y1="151" x2="294" y2="151" stroke="#1a1a1a" stroke-width="0.5"/>
+  <line x1="256" y1="70" x2="246" y2="200" stroke="#1a1a1a" stroke-width="1.5"/>
+
+  <!-- Thread connecting signatures along the spine (sewing line along left edge) -->
+  <!-- Three holes per signature on left spine edge: head, middle, tail -->
+  <!-- Head row: y≈88, Middle: y≈133, Tail: y≈178 -->
+  <!-- x positions at spine (left face) for each sig centre approximately -->
+
+  <!-- Horizontal thread lines connecting all 5 sigs at 3 heights -->
+  <!-- Head (~y=88) -->
+  <line x1="51" y1="88" x2="251" y2="88" stroke="#cc3333" stroke-width="1.5"/>
+  <!-- Mid (~y=133) -->
+  <line x1="51" y1="133" x2="251" y2="133" stroke="#cc3333" stroke-width="1.5"/>
+  <!-- Tail (~y=178) -->
+  <line x1="51" y1="178" x2="251" y2="178" stroke="#cc3333" stroke-width="1.5"/>
+
+  <!-- Dots at each signature crossing -->
+  <circle cx="51"  cy="88"  r="2.5" fill="#cc3333"/>
+  <circle cx="101" cy="88"  r="2.5" fill="#cc3333"/>
+  <circle cx="151" cy="88"  r="2.5" fill="#cc3333"/>
+  <circle cx="201" cy="88"  r="2.5" fill="#cc3333"/>
+  <circle cx="251" cy="88"  r="2.5" fill="#cc3333"/>
+  <circle cx="51"  cy="133" r="2.5" fill="#cc3333"/>
+  <circle cx="101" cy="133" r="2.5" fill="#cc3333"/>
+  <circle cx="151" cy="133" r="2.5" fill="#cc3333"/>
+  <circle cx="201" cy="133" r="2.5" fill="#cc3333"/>
+  <circle cx="251" cy="133" r="2.5" fill="#cc3333"/>
+  <circle cx="51"  cy="178" r="2.5" fill="#cc3333"/>
+  <circle cx="101" cy="178" r="2.5" fill="#cc3333"/>
+  <circle cx="151" cy="178" r="2.5" fill="#cc3333"/>
+  <circle cx="201" cy="178" r="2.5" fill="#cc3333"/>
+  <circle cx="251" cy="178" r="2.5" fill="#cc3333"/>
+
+  <!-- Signature labels -->
+  <text x="66"  y="215" text-anchor="middle" font-family="sans-serif" font-size="10" fill="#1a1a1a">Sig 1</text>
+  <text x="116" y="215" text-anchor="middle" font-family="sans-serif" font-size="10" fill="#1a1a1a">Sig 2</text>
+  <text x="166" y="215" text-anchor="middle" font-family="sans-serif" font-size="10" fill="#1a1a1a">Sig 3</text>
+  <text x="216" y="215" text-anchor="middle" font-family="sans-serif" font-size="10" fill="#1a1a1a">Sig 4</text>
+  <text x="266" y="215" text-anchor="middle" font-family="sans-serif" font-size="10" fill="#1a1a1a">Sig 5</text>
+
+  <!-- Spine label arrow -->
+  <line x1="30" y1="133" x2="44" y2="133" stroke="#1a1a1a" stroke-width="1" marker-end="url(#arr)"/>
+  <text x="27" y="128" text-anchor="middle" font-family="sans-serif" font-size="10" fill="#1a1a1a">Spine</text>
+
+  <!-- Fore-edge annotation -->
+  <line x1="296" y1="133" x2="310" y2="133" stroke="#1a1a1a" stroke-width="1"/>
+  <text x="313" y="137" font-family="sans-serif" font-size="10" fill="#1a1a1a">Fore-edge</text>
+
+  <!-- Legend -->
+  <line x1="310" y1="220" x2="330" y2="220" stroke="#cc3333" stroke-width="2"/>
+  <text x="334" y="224" font-family="sans-serif" font-size="10" fill="#1a1a1a">Thread</text>
+</svg>

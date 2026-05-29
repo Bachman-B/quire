@@ -1,0 +1,84 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 260" width="400" height="260">
+  <rect width="400" height="260" fill="#ffffff"/>
+
+  <!-- Title -->
+  <text x="200" y="18" text-anchor="middle" font-family="sans-serif" font-size="12" font-weight="bold" fill="#1a1a1a">Spiral / Coil Binding — Perspective View</text>
+
+  <!-- Page stack — slight perspective tilt -->
+  <!-- Bottom edge of stack at y=210, top at y=55, left edge x=100, right x=340 -->
+  <!-- Pages as a parallelogram stack -->
+
+  <!-- Top face of stack -->
+  <polygon points="100,55 340,55 330,45 90,45" fill="#f5f5f5" stroke="#1a1a1a" stroke-width="1.2"/>
+
+  <!-- Front face (main page surface) -->
+  <rect x="100" y="55" width="240" height="155" fill="#f5f5f5" stroke="#1a1a1a" stroke-width="1.5"/>
+
+  <!-- Side face (spine edge) showing punch holes -->
+  <polygon points="100,55 90,45 90,200 100,210" fill="#f5f5f5" stroke="#1a1a1a" stroke-width="1.5"/>
+
+  <!-- Bottom face -->
+  <polygon points="100,210 340,210 330,200 90,200" fill="#f5f5f5" stroke="#1a1a1a" stroke-width="1.2"/>
+
+  <!-- Page line suggestions on front face -->
+  <line x1="100" y1="72"  x2="340" y2="72"  stroke="#1a1a1a" stroke-width="0.4"/>
+  <line x1="100" y1="89"  x2="340" y2="89"  stroke="#1a1a1a" stroke-width="0.4"/>
+  <line x1="100" y1="106" x2="340" y2="106" stroke="#1a1a1a" stroke-width="0.4"/>
+  <line x1="100" y1="123" x2="340" y2="123" stroke="#1a1a1a" stroke-width="0.4"/>
+  <line x1="100" y1="140" x2="340" y2="140" stroke="#1a1a1a" stroke-width="0.4"/>
+  <line x1="100" y1="157" x2="340" y2="157" stroke="#1a1a1a" stroke-width="0.4"/>
+  <line x1="100" y1="174" x2="340" y2="174" stroke="#1a1a1a" stroke-width="0.4"/>
+  <line x1="100" y1="191" x2="340" y2="191" stroke="#1a1a1a" stroke-width="0.4"/>
+
+  <!-- Punch holes along left spine edge (on front face and side face) -->
+  <!-- 8 holes, evenly spaced, y from 70 to 200 -->
+  <!-- Front face holes (circles on left edge x=100) -->
+  <circle cx="100" cy="73"  r="4" fill="#ffffff" stroke="#1a1a1a" stroke-width="1.2"/>
+  <circle cx="100" cy="96"  r="4" fill="#ffffff" stroke="#1a1a1a" stroke-width="1.2"/>
+  <circle cx="100" cy="119" r="4" fill="#ffffff" stroke="#1a1a1a" stroke-width="1.2"/>
+  <circle cx="100" cy="142" r="4" fill="#ffffff" stroke="#1a1a1a" stroke-width="1.2"/>
+  <circle cx="100" cy="165" r="4" fill="#ffffff" stroke="#1a1a1a" stroke-width="1.2"/>
+  <circle cx="100" cy="188" r="4" fill="#ffffff" stroke="#1a1a1a" stroke-width="1.2"/>
+
+  <!-- Spiral coil — series of overlapping ovals threading through holes -->
+  <!-- Coil centre line follows x≈95, threading front-to-back at each hole -->
+  <!-- Each oval: centred at hole y, extends left onto spine and right a bit -->
+  <!-- Odd ovals: front pass (visible, solid); even ovals: back pass (dashed) -->
+
+  <!-- Oval 1 at y=73 -->
+  <ellipse cx="88" cy="73"  rx="18" ry="8" fill="none" stroke="#3355cc" stroke-width="2"/>
+  <!-- Oval 2 at y=96 -->
+  <ellipse cx="88" cy="96"  rx="18" ry="8" fill="none" stroke="#3355cc" stroke-width="2"/>
+  <!-- Oval 3 at y=119 -->
+  <ellipse cx="88" cy="119" rx="18" ry="8" fill="none" stroke="#3355cc" stroke-width="2"/>
+  <!-- Oval 4 at y=142 -->
+  <ellipse cx="88" cy="142" rx="18" ry="8" fill="none" stroke="#3355cc" stroke-width="2"/>
+  <!-- Oval 5 at y=165 -->
+  <ellipse cx="88" cy="165" rx="18" ry="8" fill="none" stroke="#3355cc" stroke-width="2"/>
+  <!-- Oval 6 at y=188 -->
+  <ellipse cx="88" cy="188" rx="18" ry="8" fill="none" stroke="#3355cc" stroke-width="2"/>
+
+  <!-- Connecting vertical spine of coil (left edge of ovals) -->
+  <line x1="70" y1="73"  x2="70" y2="188" stroke="#3355cc" stroke-width="1.5"/>
+  <!-- Right side of coil (passes behind stack) -->
+  <line x1="106" y1="73"  x2="106" y2="188" stroke="#3355cc" stroke-width="1.5" stroke-dasharray="4,3"/>
+
+  <!-- Labels -->
+  <!-- Holes label -->
+  <line x1="100" y1="73" x2="140" y2="38" stroke="#1a1a1a" stroke-width="0.75"/>
+  <text x="143" y="36" font-family="sans-serif" font-size="10" fill="#1a1a1a">Punch holes</text>
+
+  <!-- Coil label -->
+  <line x1="70" y1="130" x2="44" y2="130" stroke="#1a1a1a" stroke-width="0.75"/>
+  <text x="42" y="134" text-anchor="end" font-family="sans-serif" font-size="10" fill="#1a1a1a">Plastic coil</text>
+
+  <!-- Pages label -->
+  <line x1="220" y1="55" x2="220" y2="35" stroke="#1a1a1a" stroke-width="0.75"/>
+  <text x="220" y="31" text-anchor="middle" font-family="sans-serif" font-size="10" fill="#1a1a1a">Pages</text>
+
+  <!-- Legend -->
+  <line x1="22" y1="244" x2="46" y2="244" stroke="#3355cc" stroke-width="2"/>
+  <text x="50" y="248" font-family="sans-serif" font-size="10" fill="#1a1a1a">Coil (visible)</text>
+  <line x1="130" y1="244" x2="154" y2="244" stroke="#3355cc" stroke-width="2" stroke-dasharray="4,3"/>
+  <text x="158" y="248" font-family="sans-serif" font-size="10" fill="#1a1a1a">Coil (behind pages)</text>
+</svg>

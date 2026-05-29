@@ -1,12 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Insets?>
-<?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ListView?>
 <?import javafx.scene.control.SplitPane?>
-<?import javafx.scene.control.TextArea?>
 <?import javafx.scene.layout.BorderPane?>
-<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.web.WebView?>
 
 <BorderPane xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="com.maiitsoh.quirebind.desktop.controller.GuidesPanelController"
@@ -18,14 +15,8 @@
             <!-- Guide list -->
             <ListView fx:id="guideListView" styleClass="guide-list"/>
 
-            <!-- Guide content -->
-            <VBox spacing="6" styleClass="guide-content">
-                <padding><Insets top="12" right="12" bottom="12" left="12"/></padding>
-                <Label fx:id="guideTitleLabel" styleClass="guide-title" wrapText="true"/>
-                <Label fx:id="guideMetaLabel" styleClass="guide-meta" wrapText="true"/>
-                <TextArea fx:id="guideBodyArea" editable="false" wrapText="true"
-                          VBox.vgrow="ALWAYS" styleClass="guide-body"/>
-            </VBox>
+            <!-- Guide content rendered as HTML -->
+            <WebView fx:id="guideWebView"/>
 
         </SplitPane>
     </center>

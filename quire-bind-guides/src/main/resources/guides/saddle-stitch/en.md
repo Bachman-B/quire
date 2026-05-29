@@ -62,7 +62,7 @@ to form a single signature. The book is then stapled or sewn through the fold.
 The result is a flat, clean booklet that opens easily. It is the binding you will
 find in most magazines, brochures, and small catalogues.
 
-![Overview of a saddle-stitched booklet](images/overview.png)
+![Overview of a saddle-stitched booklet](images/schematic.svg)
 
 ## When to use this technique {#when-to-use}
 
@@ -156,7 +156,7 @@ Print the imposed PDF on a duplex (double-sided) printer.
 5. Begin at the centre hole, sewing outward to one end, then back to the centre, then
    to the other end, and back to the centre. Tie off the thread at the centre hole.
 
-![Sewing pattern diagram](images/sewing-pattern.png)
+![Sewing pattern diagram](images/sewing-pattern.svg)
 
 ## Trimming the edges {#trimming}
 

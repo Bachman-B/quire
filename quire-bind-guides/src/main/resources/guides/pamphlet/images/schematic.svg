@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 260" width="400" height="260">
+  <rect width="400" height="260" fill="#ffffff"/>
+
+  <!-- Title -->
+  <text x="200" y="20" text-anchor="middle" font-family="sans-serif" font-size="12" font-weight="bold" fill="#1a1a1a">Pamphlet Binding — Single Signature</text>
+
+  <!-- Single folded sheet cross-section (open, slightly splayed) -->
+  <!-- Left page -->
+  <path d="M 80 50 L 195 50 L 195 215 L 80 215 Z" fill="#f5f5f5" stroke="#1a1a1a" stroke-width="1.5"/>
+  <!-- Right page -->
+  <path d="M 205 50 L 320 50 L 320 215 L 205 215 Z" fill="#f5f5f5" stroke="#1a1a1a" stroke-width="1.5"/>
+  <!-- Spine fold -->
+  <line x1="200" y1="50" x2="200" y2="215" stroke="#1a1a1a" stroke-width="2"/>
+
+  <!-- 3 sewing holes on the spine fold -->
+  <circle cx="200" cy="82"  r="5" fill="#ffffff" stroke="#1a1a1a" stroke-width="1.5"/>
+  <circle cx="200" cy="132" r="5" fill="#ffffff" stroke="#1a1a1a" stroke-width="1.5"/>
+  <circle cx="200" cy="183" r="5" fill="#ffffff" stroke="#1a1a1a" stroke-width="1.5"/>
+
+  <!-- Thread path: 3-hole pamphlet stitch -->
+  <!-- Enter centre hole (outside) → up to hole 1 (inside) -->
+  <line x1="193" y1="132" x2="193" y2="82"  stroke="#cc3333" stroke-width="2" stroke-dasharray="6,3"/>
+  <!-- Hole 1 → outside back to centre -->
+  <line x1="207" y1="82"  x2="207" y2="132" stroke="#cc3333" stroke-width="2"/>
+  <!-- Centre → down to hole 3 (inside) -->
+  <line x1="193" y1="132" x2="193" y2="183" stroke="#cc3333" stroke-width="2" stroke-dasharray="6,3"/>
+  <!-- Hole 3 → outside back to centre to tie -->
+  <line x1="207" y1="183" x2="207" y2="132" stroke="#cc3333" stroke-width="2"/>
+  <!-- Tie knot marker at centre hole -->
+  <circle cx="200" cy="132" r="5" fill="#cc3333" stroke="none"/>
+
+  <!-- Hole labels -->
+  <text x="215" y="86"  font-family="sans-serif" font-size="11" fill="#1a1a1a">Hole 1 (head)</text>
+  <text x="215" y="136" font-family="sans-serif" font-size="11" fill="#1a1a1a">Hole 2 (centre)</text>
+  <text x="215" y="187" font-family="sans-serif" font-size="11" fill="#1a1a1a">Hole 3 (tail)</text>
+
+  <!-- Labels -->
+  <text x="137" y="240" text-anchor="middle" font-family="sans-serif" font-size="11" fill="#1a1a1a">Left page</text>
+  <text x="262" y="240" text-anchor="middle" font-family="sans-serif" font-size="11" fill="#1a1a1a">Right page</text>
+  <text x="200" y="35"  text-anchor="middle" font-family="sans-serif" font-size="10" fill="#1a1a1a">Spine fold</text>
+
+  <!-- Legend -->
+  <line x1="22" y1="244" x2="50" y2="244" stroke="#cc3333" stroke-width="2"/>
+  <text x="54" y="248" font-family="sans-serif" font-size="10" fill="#1a1a1a">Outside</text>
+  <line x1="110" y1="244" x2="138" y2="244" stroke="#cc3333" stroke-width="2" stroke-dasharray="5,3"/>
+  <text x="142" y="248" font-family="sans-serif" font-size="10" fill="#1a1a1a">Inside</text>
+  <circle cx="200" cy="244" r="4" fill="#cc3333"/>
+  <text x="208" y="248" font-family="sans-serif" font-size="10" fill="#1a1a1a">Start/tie (hole 2)</text>
+</svg>

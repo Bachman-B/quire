@@ -1,0 +1,85 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 260" width="400" height="260">
+  <rect width="400" height="260" fill="#ffffff"/>
+
+  <!-- Title -->
+  <text x="200" y="18" text-anchor="middle" font-family="sans-serif" font-size="12" font-weight="bold" fill="#1a1a1a">Coptic Chain Stitch — Detail</text>
+
+  <!-- Two adjacent signature spines side by side, showing holes and thread path -->
+  <!-- Sig A spine (left), Sig B spine (right), gap between them shows the linking loop -->
+
+  <!-- Sig A: represented as a vertical bar -->
+  <rect x="80"  y="38" width="100" height="195" fill="#f5f5f5" stroke="#1a1a1a" stroke-width="1.5"/>
+  <text x="130" y="34" text-anchor="middle" font-family="sans-serif" font-size="10" fill="#1a1a1a">Signature A</text>
+
+  <!-- Sig B -->
+  <rect x="220" y="38" width="100" height="195" fill="#f5f5f5" stroke="#1a1a1a" stroke-width="1.5"/>
+  <text x="270" y="34" text-anchor="middle" font-family="sans-serif" font-size="10" fill="#1a1a1a">Signature B</text>
+
+  <!-- Spine gap annotation -->
+  <text x="200" y="140" text-anchor="middle" font-family="sans-serif" font-size="9" fill="#1a1a1a">gap</text>
+
+  <!-- 4 holes per signature spine (right edge of A, left edge of B) -->
+  <!-- Sig A right edge x=180; Sig B left edge x=220 -->
+  <!-- Holes at y=70, 105, 140, 175, 210 -->
+
+  <!-- Sig A holes (right edge) -->
+  <circle cx="180" cy="70"  r="4.5" fill="#ffffff" stroke="#1a1a1a" stroke-width="1.5"/>
+  <circle cx="180" cy="110" r="4.5" fill="#ffffff" stroke="#1a1a1a" stroke-width="1.5"/>
+  <circle cx="180" cy="150" r="4.5" fill="#ffffff" stroke="#1a1a1a" stroke-width="1.5"/>
+  <circle cx="180" cy="190" r="4.5" fill="#ffffff" stroke="#1a1a1a" stroke-width="1.5"/>
+
+  <!-- Sig B holes (left edge) -->
+  <circle cx="220" cy="70"  r="4.5" fill="#ffffff" stroke="#1a1a1a" stroke-width="1.5"/>
+  <circle cx="220" cy="110" r="4.5" fill="#ffffff" stroke="#1a1a1a" stroke-width="1.5"/>
+  <circle cx="220" cy="150" r="4.5" fill="#ffffff" stroke="#1a1a1a" stroke-width="1.5"/>
+  <circle cx="220" cy="190" r="4.5" fill="#ffffff" stroke="#1a1a1a" stroke-width="1.5"/>
+
+  <!-- Thread inside Sig A (dashed) running from hole to hole -->
+  <line x1="174" y1="70"  x2="174" y2="110" stroke="#cc3333" stroke-width="1.5" stroke-dasharray="5,3"/>
+  <line x1="174" y1="110" x2="174" y2="150" stroke="#cc3333" stroke-width="1.5" stroke-dasharray="5,3"/>
+  <line x1="174" y1="150" x2="174" y2="190" stroke="#cc3333" stroke-width="1.5" stroke-dasharray="5,3"/>
+
+  <!-- Thread inside Sig B (dashed) -->
+  <line x1="226" y1="70"  x2="226" y2="110" stroke="#cc3333" stroke-width="1.5" stroke-dasharray="5,3"/>
+  <line x1="226" y1="110" x2="226" y2="150" stroke="#cc3333" stroke-width="1.5" stroke-dasharray="5,3"/>
+  <line x1="226" y1="150" x2="226" y2="190" stroke="#cc3333" stroke-width="1.5" stroke-dasharray="5,3"/>
+
+  <!-- Coptic link: thread exits Sig A hole, passes THROUGH the previous Sig B loop, re-enters -->
+  <!-- At hole y=70 (first): simple loop across -->
+  <path d="M 180,70 Q 200,58 220,70" fill="none" stroke="#cc3333" stroke-width="2"/>
+
+  <!-- At hole y=110: thread from Sig A exits, forms loop, hooks under Sig B's loop from previous row -->
+  <!-- Sig A exit → small downward loop → link under Sig B loop → Sig B exit -->
+  <!-- Outer thread of Sig A going out (solid) -->
+  <path d="M 180,110 C 188,118 188,128 200,130 C 212,132 212,118 220,110" fill="none" stroke="#cc3333" stroke-width="2"/>
+  <!-- Link through previous (y=70) loop: a small circle to indicate link -->
+  <ellipse cx="200" cy="90" rx="9" ry="5" fill="none" stroke="#cc3333" stroke-width="1.5" stroke-dasharray="3,2"/>
+
+  <!-- At hole y=150 -->
+  <path d="M 180,150 C 188,158 188,168 200,170 C 212,172 212,158 220,150" fill="none" stroke="#cc3333" stroke-width="2"/>
+  <ellipse cx="200" cy="130" rx="9" ry="5" fill="none" stroke="#cc3333" stroke-width="1.5" stroke-dasharray="3,2"/>
+
+  <!-- At hole y=190 -->
+  <path d="M 180,190 C 188,198 188,208 200,210 C 212,212 212,198 220,190" fill="none" stroke="#cc3333" stroke-width="2"/>
+  <ellipse cx="200" cy="170" rx="9" ry="5" fill="none" stroke="#cc3333" stroke-width="1.5" stroke-dasharray="3,2"/>
+
+  <!-- Annotations -->
+  <!-- "Link loop" pointer -->
+  <line x1="200" y1="90" x2="200" y2="56" stroke="#1a1a1a" stroke-width="0.75"/>
+  <text x="200" y="52" text-anchor="middle" font-family="sans-serif" font-size="9" fill="#1a1a1a">Link through prev. loop</text>
+
+  <!-- "Linking arch" pointer at y=110 -->
+  <line x1="218" y1="130" x2="346" y2="145" stroke="#1a1a1a" stroke-width="0.75"/>
+  <text x="350" y="142" font-family="sans-serif" font-size="9" fill="#1a1a1a">Chain arch</text>
+  <text x="350" y="153" font-family="sans-serif" font-size="9" fill="#1a1a1a">(outside)</text>
+
+  <!-- Inside thread pointer -->
+  <line x1="174" y1="130" x2="48" y2="145" stroke="#1a1a1a" stroke-width="0.75"/>
+  <text x="44" y="149" text-anchor="end" font-family="sans-serif" font-size="9" fill="#1a1a1a">Inside thread</text>
+
+  <!-- Legend -->
+  <line x1="22" y1="244" x2="46" y2="244" stroke="#cc3333" stroke-width="2"/>
+  <text x="50" y="248" font-family="sans-serif" font-size="10" fill="#1a1a1a">Exposed (outside)</text>
+  <line x1="180" y1="244" x2="204" y2="244" stroke="#cc3333" stroke-width="2" stroke-dasharray="5,3"/>
+  <text x="208" y="248" font-family="sans-serif" font-size="10" fill="#1a1a1a">Inside signature</text>
+</svg>
