@@ -292,8 +292,9 @@ jobs:
 
   # ── GitHub Release ───────────────────────────────────────────────────────────
   create-release:
-    needs: [build-linux, build-windows, build-macos-x64, build-macos-arm64, build-web]
-    # Run even if macos-x64 timed out (continue-on-error above marks it neutral)
+    # macos-x64 excluded: macos-13 Intel runners are being retired by GitHub and
+    # may queue indefinitely. Intel Mac users can run the arm64 DMG via Rosetta 2.
+    needs: [build-linux, build-windows, build-macos-arm64, build-web]
     if: always() && !failure() && !cancelled()
     runs-on: ubuntu-latest
     permissions:
