@@ -175,8 +175,11 @@ jobs:
           path: dist\
 
   # ── macOS x86_64: .dmg ───────────────────────────────────────────────────────
+  # macos-13 Intel runners are scarce; timeout prevents indefinite blocking.
   build-macos-x64:
     runs-on: macos-13
+    timeout-minutes: 45
+    continue-on-error: true
     steps:
       - uses: actions/checkout@v4
 
@@ -290,6 +293,8 @@ jobs:
   # ── GitHub Release ───────────────────────────────────────────────────────────
   create-release:
     needs: [build-linux, build-windows, build-macos-x64, build-macos-arm64, build-web]
+    # Run even if macos-x64 timed out (continue-on-error above marks it neutral)
+    if: always() && !failure() && !cancelled()
     runs-on: ubuntu-latest
     permissions:
       contents: write
